@@ -28,16 +28,17 @@ jobs:
       - name: 이전 pull 폴더삭제하기
         run: |
           echo "-------- 이전 clone 폴더삭제하기 -----------"
-          cd ..
           rm -rf springboot20231026
-          mkdir springboot20231026
-          cd springboot20231026
       - name: git pull하기
         run: |
           echo "-------- git clone하기 -----------"        
           git clone https://github.com/rnjstjddo/springboot20231026.git
+          echo "-------- springboot20231026 폴더이동 -----------"
+          cd springboot20231026
           echo "-------- 현재폴더 파일확인 -----------"
           ls
+          echo "-------- 현재위치확인 -----------"
+          pwd          
         #  echo "-------- springboot20231026 폴더로 이동 -----------"
         #  cd springboot20231026
 
