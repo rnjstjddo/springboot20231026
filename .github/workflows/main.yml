@@ -21,20 +21,25 @@ jobs:
       # 위부분 주석
       - name: 현재위치확인
         run: |
-          echo "-------- 현재위치확인 -----------"
+          echo "-------- 현재위치확인 -----------" 
           pwd
+        #/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
 
       - name: 이전 pull 폴더삭제하기
         run: |
           echo "-------- 이전 clone 폴더삭제하기 -----------"
+          cd ..
           rm -rf springboot20231026
-
+          mkdir springboot20231026
+          cd springboot20231026
       - name: git pull하기
         run: |
           echo "-------- git clone하기 -----------"        
           git clone https://github.com/rnjstjddo/springboot20231026.git
-          echo "-------- springboot20231026 폴더로 이동 -----------"
-          cd springboot20231026
+          echo "-------- 현재폴더 파일확인 -----------"
+          ls
+        #  echo "-------- springboot20231026 폴더로 이동 -----------"
+        #  cd springboot20231026
 
       #- name: 그래들캐싱 #실행권한 부여전에 처리
       #  uses: actions/cache@v3
