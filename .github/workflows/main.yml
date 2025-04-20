@@ -9,15 +9,33 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      - name: 깃허브 레포지토리에서 코드를 워크플로우환경으로 가져오기
-        uses: actions/checkout@v3
+      #- name: 깃허브 레포지토리에서 코드를 워크플로우환경으로 가져오기
+      #  uses: actions/checkout@v3
       
-      - name: 빌드위해 Runner에 jdk설치
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin' #벤더사명으로 수정불가
-  
+      #- name: 빌드위해 Runner에 jdk설치
+      #  uses: actions/setup-java@v3
+      #  with:
+      #    java-version: '11'
+      #    distribution: 'temurin' #벤더사명으로 수정불가
+
+      # 위부분 주석
+      - name: 현재위치확인
+        run: |
+          echo "-------- 현재위치확인 -----------"
+          pwd
+
+      - name: 이전 pull 폴더삭제하기
+        run: |
+          echo "-------- 이전 clone 폴더삭제하기 -----------"
+          rm -rf springboot20231026
+
+      - name: git pull하기
+        run: |
+          echo "-------- git clone하기 -----------"        
+          git clone https://github.com/rnjstjddo/springboot20231026.git
+          echo "-------- springboot20231026 폴더로 이동 -----------"
+          cd springboot20231026
+
       #- name: 그래들캐싱 #실행권한 부여전에 처리
       #  uses: actions/cache@v3
       #  with:
