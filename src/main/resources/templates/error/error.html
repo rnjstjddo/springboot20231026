@@ -1,0 +1,16 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html"
+>
+
+<th:block th:replace="~{layout/article_about_error :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+        <article style="text-align:center">
+            <h3><a src="/image/imoji/oh.png" style="height:100px;width:auto;" >요청하신 페이지를 찾을수 없습니다.</a></h3>
+            <a href="/home/home" class="btn btn-outline-primary" type="button">홈화면으로 돌아가기</a>
+        </article>
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+</script>

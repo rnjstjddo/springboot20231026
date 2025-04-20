@@ -1,0 +1,134 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about_guestbook :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    방명록 등록
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/guestbook/list}|">목록으로</a>
+
+
+                <form action="/guestbook/register" method="post">
+                    <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
+                    <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title"  id="title" placeholder="제목을 작성해주세요" required/>
+                    </div>
+                    <br>
+                    <br>
+
+                    <th:block th:if="${loginMember ==null}">
+                    <div class="mb-3">
+                        작성자
+                        <input class="form-control" type="text"  name="writer" id="writer"   placeholder="작성자를 입력해주세요" required/>
+                    </div>
+                    </th:block>
+
+                    <th:block th:if="${loginMember !=null}">
+                        <div class="mb-3">
+                            작성자
+                            <input class="form-control writer" type="text"  name="writer"  th:value="${loginMember}" readonly/>
+                        </div>
+                    </th:block>
+
+                    <br>
+                    <br>
+
+
+                    <div class="mb-3">
+                        내용
+                        <textarea class="form-control"   name="content" id="content" rows="5" placeholder="내용을 작성해주세요" required></textarea>
+                    </div>
+                    <br>
+                    <br>
+
+                  <!--  <div class="mb-3">
+                        첨부파일
+                        <input class="form-control file" type="file"  name="fList" placeholder="첨부파일을 선택해주세요"  multiple/>
+                    </div>
+                    <br>
+                    <div>-->
+                        <!-- <ul style="display:flex; flex-flow:row; overflow:auto;">
+
+                         </ul>-->
+                        <!-- <div class="row row-cols-1 row-cols-md-3 g-4 uploadResult">
+                        </div>
+
+                    </div>-->
+                    <br>
+                    <br>
+
+
+                    <div class="col-12" style="text-align: center;">
+                        <button type="submit" style="display:inline-block;" class="btn btn-outline-primary">방명록 등록하기</button>
+                        <button type="reset"  style="display:inline-block;" class="btn btn-outline-secondary">초기화</button>
+
+                    </div>
+                </form>
+
+            </div>
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+$(document).ready(function(){
+  var registerForm=$("form");
+
+
+$("#registerBtn").on("click", function(e){
+    //-console.log("register.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 ");
+    e.preventDefault();
+
+    var title = $("#title").val();
+    var content = $("#content").val();
+    var writer = $("#writer").val();
+
+    var data={
+        title:title, content:content, writer:writer
+    };
+
+    $.ajax({
+        url:'/api/v1/posts/',
+        method:'post',
+        dataType:'json',
+        contentType:'application/json;charset=utf-8',
+        data:JSON.stringify(data)
+    })
+    .done(function(result){
+        //-console.log("register.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 -done() 진입");
+        alert(result+"번 게시글이 등록되었습니다.");
+        location.replace(`/?`+link);
+    })
+    .fail(function(error){
+        //-console.log("register.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 -then() 진입");
+        //-console.log(error);
+    });
+
+});//등록하기버튼 이벤트처리
+
+});//$(document)
+</script>
+
+</html>

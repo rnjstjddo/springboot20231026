@@ -1,0 +1,189 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/article_about_admin_navs :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    게시글댓글 전체목록(관리자페이지)
+                </div>
+
+                <form th:action="@{/admin/tab/postreply}" method="get">
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <select class="form-select" name="type">
+                                        <option th:selected ="${pageRequestDTO.type == null}" value="" >---</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'n'}" value="t">게시글번호</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'c'}" value="c">내용</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'w'}" value="w">작성자</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'nc'}" value="tc">게시글번호&내용</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'ncw'}" value="tcw">게시글번호&내용&작성자</option>
+                                    </select>
+                                </div>
+
+                                <input type="text" class="form-control" name="keyword"
+                                       th:value="${pageRequestDTO.keyword}">
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-search searchBtn" type="submit">검색</button>
+                                    <button type="reset" class="btn btn-outline-secondary btn-clear" id="reset">초기화</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- 검색처리 -->
+
+
+                    <br>
+                    <th:block th:if="${responseDtoList} ==null and ${pageRequestDTO.type} ==null and
+                        ${pageRequestDTO.keyword} ==null">
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                         등록된 게시물댓글이 없습니다.
+                    </th:block>
+
+
+                    <th:block th:if="${responseDtoList} ==null and ${pageRequestDTO.type} !=null and
+                        ${pageRequestDTO.keyword} !=null">
+                        <div style="text-align:center;">
+                            <b>검색 결과가 없습니다. </b> &nbsp;&nbsp;
+                        </div>
+                    </th:block>
+                    <br>
+
+                    <th:block th:if="${!#lists.isEmpty(responseDtoList)}">
+
+                        <table class="table table-hover">
+                            <tr>
+                                <th scope="col" width="100px">댓글번호</th>
+                                <th scope="col" width="100px">게시글번호</th>
+                                <th scope="col" width="500px">댓글내용</th>
+                                <th scope="col" width="100px">작성자</th>
+                                <th scope="col" width="100px">작성일자</th>
+                                <th scope="col" width="100px">수정일자</th>
+                            </tr>
+
+
+                            <tr th:each="dto:${responseDtoList}">
+                                <td id="id" >[[${dto.prno}]]</td>
+                                <td>[[${dto.pno}]]</td>
+                                <td>[[${dto.comment}]]</td>
+                                <td>[[${dto.name}]]</td>
+                                <td>[[${#temporals.format(dto.createdDate,'yyyy-MM-dd')}]]</td>
+                                <td>[[${#temporals.format(dto.modifiedDate,'yyyy-MM-dd')}]]</td>
+                            </tr>
+
+                        </table>
+
+                        <nav  aria-label="Page navigation example">
+                            <div>
+                                <ul class="pagination">
+                                    <li class="page-item pagination_button " th:if="${responseDto.prev}">
+                                        <a  class="page-link" aria-label="Previous" th:data-num="${responseDto.start-1}"><span aria-hidden="true">&laquo;</span></a>
+                                    </li>
+
+                                    <th:block th:each="i:${#numbers.sequence(responseDto.start, responseDto.end)}" th:if="${responseDto.page}">
+                                        <li class="page-item pagination_button " th:classappend="${responseDto.page == i } ? active : ''" >
+                                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                        </li>
+                                    </th:block>
+
+                                    <li class="page-item pagination_button " th:if="${responseDto.next}">
+                                        <a  class="page-link" aria-label="Next" th:data-num="${responseDto.end+1}"><span aria-hidden="true">&raquo;</span></a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </nav>
+                        </th:block>
+                </form>
+            </div>
+        </article>
+
+    </th:block>
+</th:block>
+
+<script th:inline="javascript">
+
+var link =[[${pageRequestDTO.getLink()}]];
+
+var loginMember =[[${loginMember}]];
+//-console.log("admin_tab_postreply.html 현재로그인한 회원-> "+ loginMember);
+
+
+$(document).ready(function(){
+    var id=$("#id").html();
+
+    //검색+페이지이동
+    $("a.page-link").on("click", function(e){
+        //-console.log("admin_tab_postreply.html 검색+페이지이동 처리 클릭이벤트 진입");
+        e.preventDefault();
+        var page = $(this).data("num");
+
+        $("form").append(`<input type='hidden' name='page' value=${page}>`);
+        $("form").submit();
+    });//검색+페이지이동
+
+
+    $("#reset").on("click", function(e){
+        e.preventDefault();
+        $("form").empty();
+        $("form").submit();
+    });
+
+//검색버튼클릭시
+    $(".searchBtn").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입");
+        var selectvalue = $("select[name=type]").val();
+        //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+        var selectkeyword = $("input[name=keyword]").val();
+        //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+        if(selectvalue =="" || selectkeyword == ""){
+            //-console.log("admin_tab_postreply.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+            alert("검색조건을 선택하시고 검색어를 입력해주세요");
+            return;
+        }
+
+        if(selectvalue !="" && selectkeyword != ""){
+            //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+            $("form").submit();
+        }
+    });
+
+     $(".searchBtn").on("keyup",function(key){
+        if(key.keyCode==13){
+            //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입");
+            var selectvalue = $("select[name=type]").val();
+            //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+            var selectkeyword = $("input[name=keyword]").val();
+            //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+            if(selectvalue =="" || selectkeyword == ""){
+                //-console.log("admin_tab_postreply.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+                alert("검색조건을 선택하시고 검색어를 입력해주세요");
+                return;
+            }
+
+            if(selectvalue !="" && selectkeyword != ""){
+                //-console.log("admin_tab_postreply.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+                $("form").submit();
+            }
+        }
+    });
+
+
+});
+</script>
+
+
+</html>

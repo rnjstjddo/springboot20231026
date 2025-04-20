@@ -1,0 +1,51 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about_guestbook :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    업로드예제
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/guestbook/list}|">방명록목록</a>
+                <a class="btn btn-outline-success" th:href="|@{/}|">게시글목록</a>
+
+                <br>
+                <br>
+
+                <input name="multipartFiles" type="file" multiple>
+                <br>
+                <br>
+
+                <div class="col-12" style="text-align: center;">
+                    <button type="button" style="display:inline-block;" class="btn btn-outline-primary" id="uploadBtn">업로드하기</button>
+                </div>
+                <br>
+                <br>
+
+                <div class="uploadResult">
+                </div>
+
+            </div>
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script type="text/javascript" src="/js/uploadEx.js?ver=3.0"></script>
+
+
+</html>

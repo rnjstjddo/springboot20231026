@@ -1,0 +1,325 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/pricing_mypage :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+
+    <!-- Pricing section-->
+
+        <section class="py-5">
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bolder">마이페이지 > 관심 강아지 목록</h3>
+                    <p class="lead fw-normal text-muted mb-0"></p>
+                </div>
+                <th:block th:if="${memberDTO} !=null and ${countWishNum} !=null">
+                    <div class="fw-bold countNumDiv">
+                        [[${memberDTO.name}]]회원님의 &nbsp;&nbsp;
+                        <button type="button" class="btn btn-warning">
+                            관심강아지 <span class="badge text-bg-danger countNum">[[${countWishNum}]]</span> 마리
+                        </button>
+                    </div>
+                </th:block>
+                <th:block th:if="${memberDTO} !=null and ${countWishNum} ==null">
+                    <div class="fw-bold"> [[${memberDTO.name}]]회원님!
+
+                    </div>
+                </th:block>
+                <br><br>
+                <div class="row gx-5 justify-content-center">
+                    <th:block th:if="${#strings.isEmpty(dogSellReadDTOList)}" >
+                        <br>
+                        <br>
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        <b>찜한 분양강아지가 아직 없습니다.^^</b>
+                    </th:block>
+
+                    <div class="wishListEmpty" style="display:none">
+                        <br>
+                        <br>
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        <b>찜한 분양강아지가 아직 없습니다.^^</b>
+                    </div>
+                </div>
+
+
+                <div class="row gx-5">
+                    <th:block th:if="${not #strings.isEmpty(dogSellReadDTOList)}">
+                        <!-- Pricing card free-->
+                        <div class="col-lg-6 col-xl-4 wishDiv" th:each="readDto:${dogSellReadDTOList}">
+                            <div class="card mb-5 mb-xl-0">
+                                <div class="card-body p-5">
+                                    <div style="text-align:right;">
+                                        <button  type="button" class="btn-close removeWishBtn" aria-label="Close"
+                                                 th:data-name="${memberDTO.name}" th:data-wishnum="${readDto.dno}">
+                                        </button>
+                                    </div>
+                                    <div class="small text-uppercase fw-bold">
+                                        <h2 class="fw-bolder fs-5 mb-4">
+                                            <i class="bi bi-star-fill text-warning"></i>
+                                            분양번호 [[${readDto.dno}]]
+
+                                        </h2>
+                                    </div>
+
+                                    <div style="width:300px;height:200px;display:text-align;display:flex;justify-content:center;">
+                                        <img style="width:80%;" th:src="|/dogselldisplay?fileName=${readDto.dsiDtoList[0].getImageURL()}|" class="img-fluid rounded mb-5 mb-lg-0" >
+                                    </div>
+                                    <div class="mb-3">
+                                    </div>
+                                    <ul class="list-unstyled mb-4">
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">이름</i>
+                                            <strong>[[${readDto.name}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">나이</i>
+                                            <strong>[[${readDto.age}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">품종</i>
+                                            <strong>[[${readDto.type}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">암수</i>
+                                            <strong>[[${readDto.gender}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">몸무게</i>
+                                            <strong>[[${readDto.weight}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">건강</i>
+                                            <strong>[[${readDto.health}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">분양가격</i>
+                                            <strong>[[${readDto.price}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">그외정보</i>
+                                            <strong>[[${readDto.content}]]</strong>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="bi bi-check text-primary">주인</i>
+                                            <strong class="writer">[[${readDto.writer}]]</strong>
+                                        </li>
+                                    </ul>
+                                    <div class="d-grid">
+                                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                            <i class="bi bi-envelope contactBtn"
+                                               th:data-writer="${readDto.writer}"></i>
+                                        </div>
+                                        <a class="text-decoration-none">
+                                            <i class="bi-arrow-up"></i>
+                                            메시지를 보내려면 아이콘을 클릭해주세요!
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- col-lg-6 -->
+                    </th:block>
+                </div><!-- row gx-5 -->
+            </div><!-- container -->
+    </section>
+
+
+    <!-- 모달 메시지연락창 -->
+    <div class="modal contactModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <button type="button" class="btn-close contactModalCloseBtn" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+                <div class="text-center mb-5">
+                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                        <i class="bi bi-envelope contactBtn"></i>
+                    </div>
+                    <h1 class="fw-bolder">주인과의 연락</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">닉네임</span>
+                        <input type="text" class="form-control" id="name"
+                               readonly th:value="${memberDTO.name}"/>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">이메일</span>
+                        <input type="text" class="form-control"
+                               readonly th:value="${memberDTO.email}" id="email"/>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">핸드폰(기호없이 숫자만)</span>
+                        <input type="text" class="form-control" onchange="phoneCheck(this)"
+                                id="phone" />
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">전달메시지</span>
+                        <textarea class="form-control" id="message" rows="4">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-lg" id="submitButton"
+                            type="button">Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div><!-- 모달 메시지연락창 -->
+
+    </th:block>
+    </th:block><!-- content -->
+</th:block>
+
+
+<script th:inline="javascript">
+
+
+
+
+function phoneCheck(target){
+    //-console.log("wishlist.html 폰번호 정규식표현 검사 진입");
+    //-console.log(target);
+    var num = target.value;
+    //-console.log("wishlist.html 폰번호 정규식표현 검사 진입 -> "+ num);
+
+    var number = num.replace(/ /gi, '');
+    var check = /^(01[016789]{1})?[0-9]{3,4}?[0-9]{4}$/;
+    var result = check.test(number);
+
+    if(check.test(num)){
+        //-console.log("정규식 맞음");
+        return;
+    }else{
+        //-console.log("정규식 틀림");
+        alert("핸드폰번호의 공백과 '-' 기호를 제외한 숫자만 입력해주세요!")
+        return;
+    }
+}
+
+
+$(document).ready(function(){
+
+var name = [[${memberDTO.name}]];
+
+//분양위시리스트삭제
+$(".removeWishBtn").on("click",function(){
+    //-console.log("wishlist.html 위시리스트 삭제버튼 클릭이벤트 진입");
+    var wishnum = $(this).data("wishnum");
+    var name = $(this).data("name");
+    var wishDiv = $(this).closest(".wishDiv");
+    var data={name:name}
+    //-console.log(data);
+
+    //현재 위시상품수
+    var beforeCountnum = $(".countNum").html();
+    //-console.log("wishlist.html 위시리스트 삭제버튼 클릭이벤트 진입 삭제전 위시상품수 -> "+beforeCountnum)
+
+    $.ajax({
+        url:"/mypage/wishlist/remove/"+wishnum,
+        type:"get",
+        contentType:"application/json;charset=utf-8",
+        dataType:'text',
+        //data:JSON.stringify(data),
+        data:{name:name},
+        success:function(result){
+            //-console.log("wishlist.html 위시리스트 삭제버튼 클릭이벤트 진입 - $.ajax success() 진입");
+            if(!result){
+                //-console.log("존재하지 않는 위시번호입니다.");
+                alert("존재하지 않는 위시번호입니다.");
+            }
+            if(result){
+                if( (beforeCountnum -1) == 0){
+                    //-console.log("wishlist.html 위시리스트 삭제버튼 클릭이벤트 진입 - $.ajax success() 진입 찜한상품수가 0일 경우 진입");
+
+                    $(".wishListEmpty").show();
+                    $(".countNumDiv").hide();
+                    alert(wishnum+"번 분양글이 위시리스트에서 삭제되었습니다.");
+                    wishDiv.remove();
+                }else{
+                    //-console.log("wishlist.html 위시리스트 삭제버튼 클릭이벤트 진입 - $.ajax success() 진입 찜한상품수가 0이 아닐 경우 진입");
+
+                    $(".countNum").html(beforeCountnum-1);
+                    alert(wishnum+"번 분양글이 위시리스트에서 삭제되었습니다.");
+                    wishDiv.remove();
+                }
+            }
+        }
+    });//$.ajax
+});//위시리스트삭제
+
+
+
+
+var messageWriter;
+
+$(".contactBtn").on("click", function(){
+    //-console.log("wishlist.html 메지지보내기 클릭이벤트 진입 분양글 주인 -> ");
+    messageWriter = $(this).data("writer");
+    var w= $(this).data("writer");
+    //-console.log(messageWriter);
+    //-console.log(w);
+    $(".contactModal").show();
+
+});
+
+
+$(".contactModalCloseBtn").on("click", function(){
+    //-console.log("wishlist.html 모달창 메지지보내기 닫기이벤트 진입");
+    $(".contactModal").hide();
+});
+
+
+
+$(".contactModal").on("click", "#submitButton", function(){
+    //-console.log("wishlist.html 모달창 메지지보내기 전송이벤트 진입");
+    var target = $(this);
+    var name =$("#name").val();
+    var email =$("#email").val();
+    var phone =target.closest(".modal").find("#phone").val();
+    var message =target.closest(".modal").find("#message").val().trim();
+
+    //핸드폰 유효성체크
+    phone = phone.replace(/ /gi, '');
+    var regExp = /^(01[016789]{1})?[0-9]{3,4}?[0-9]{4}$/;
+
+    if(!regExp.test(phone)){
+        alert("핸드폰번호의 공백과 '-' 기호를 제외한 숫자만 입력해주세요!")
+        return;
+    }else{
+
+
+        //Message String email; content; number; name; Member sender;recipient; BaseTimeEntity
+        var data ={email:email,name:name, content:message, number:phone,
+                recipientString:messageWriter, senderString:name};
+
+        //-console.log(data);
+
+        $.ajax({
+            url:"/mypage/message/send",
+            type:"post",
+            contentType:"application/json;charset=utf-8",
+            dataType:"text",
+            data:JSON.stringify(data),
+            success:function(result){
+                //-console.log("wishlist.html 모달창 메지지보내기 전송이벤트 진입 - $.ajax success() 진입");
+                alert(name +"님 쪽지 전달이 완료되었습니다.!");
+                target.closest(".modal").find("#phone").val("");
+                target.closest(".modal").find("#message").val("");
+                $(".contactModal").hide();
+            }//success
+        });//$.ajax
+    }//if-else
+});//메시지전송
+
+
+});//$(document)
+</script>
+</html>

@@ -1,0 +1,229 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html"
+>
+
+<th:block th:replace="~{layout/index_home :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+    <!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-5">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-lg-8 col-xl-7 col-xxl-6">
+                <div class="my-5 text-center text-xl-start">
+                    <h1 class="display-5 fw-bolder text-white mb-2">Merry Dog</h1>
+                   <!-- <p class="lead fw-normal text-white-50 mb-4">Merry Dog</p>
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Merry Dog</a>
+                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Merry Dog</a>
+                    </div>-->
+                </div>
+            </div><!--class="img-fluid rounded-3 my-5"-->
+            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img th:src="@{/image/three.jpg}"  class="img-fluid rounded-3 my-5" alt="..." /></div>
+        </div>
+    </div>
+</header>
+
+    <!-- Call to action-->
+    <aside class="bg-primary bg-gradient rounded-3 p-4 p-sm-5 mt-5">
+        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+            <div class="mb-4 mb-xl-0">
+                <div class="fs-3 fw-bold text-white">분양하고 싶은 강아지품종을 검색해보세요!</div>
+            </div>
+            <div>
+                <th:block th:if="${loginMember} ==null">
+                <div>
+                    <a class="btn btn-outline-light btn-lg px-4" href="/member/join">회원가입</a>
+                    <a class="btn btn-outline-light btn-lg px-4" href="/member/login">로그인</a>
+                    <br><br>
+                    <div class="small text-white-50">회원가입으로 분양하고 싶은 강아지를 찾아보세요!</div>
+                </div>
+                </th:block>
+                <th:block th:if="${loginMember} !=null">
+                    <div>
+                        <div class="small text-white-50">
+                            [[${loginMember}]]님이 찾으시는 강아지를 검색해보세요!
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+            <div class="mb-4 mb-xl-0">
+                <div class="input-group mb-2">
+                    <input class="form-control" type="text" placeholder="Email address..." aria-label="Email address..." aria-describedby="button-newsletter" />
+                    <button class="btn btn-outline-light" id="button-newsletter" type="button">찾기</button>
+
+                </div>
+            </div>
+
+        </div>
+    </aside><!--bg-dark bg-gradient  -->
+        <section class="py-1 mt-5">
+           <h5 style="display:inline-block;" class="fw-bolder align-items-center justify-content-center">
+               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;최근 올라온 분양강아지
+               <a class="text-decoration-none" href="/dogsell/list">
+                   <span class="fw-bolder">&nbsp;&nbsp;more
+                       <i class="bi bi-arrow-right"></i>
+                   </span>
+               </a>
+           </h5>
+
+        </section>
+        <!-- Team members section-->
+<section class="py-5 bg-light">
+   <!-- <div class="container px-5 my-5">-->
+    <!-- <div>
+       <h5 class="fw-bolder">&nbsp;&nbsp;&nbsp;&nbsp;최근 올라온 분양강아지</h5>
+        <p class="lead fw-normal text-muted mb-5"></p>
+       </div>
+        </div>
+        -->
+
+    <th:block th:if="${#lists.isEmpty(dsListDto)}" th:each="ds:${dsListDto}">
+    <div class="row gx-5 row-cols-1 row-cols-sm-2 row-cols-xl-4 justify-content-center" style="position:relative;">
+        <div class="col mb-5 mb-5 mb-xl-0">
+            <div class="text-center">
+                <img class="img-fluid rounded-circle mb-4 px-4" th:src="@{ds.dsiDtoList[0]}">
+                <h5 class="fw-bolder">[[${ds.type}]]</h5>
+                <div class="fst-italic text-muted">[[${ds.age}]] 살 | [[${ds.weight}]] kg</div>
+            </div>
+        </div>
+    </div>
+    </th:block>
+        <div class="row gx-5 row-cols-1 row-cols-sm-2 row-cols-xl-4 justify-content-center" style="position:relative;">
+            <th:block th:if="${!#lists.isEmpty(dsListDto) && dsDtoStat.index <4}" th:each="dsDto:${dsListDto}" >
+            <div class="col mb-5 mb-5 mb-xl-0">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4"
+                         th:src="|/dogselldisplay?fileName=${dsDto.dsiDtoList[0].getImageURL()}|" alt="" />
+                    <h5 class="fw-bolder">[[${dsDto.type}]] | [[${dsDto.age}]]살</h5>
+                    <div class="fst-italic text-muted">[[${#temporals.format(dsDto.createdDate,'yyyy-MM-dd')}]]</div>
+                </div>
+            </div>
+            </th:block>
+<!--
+            <div class="col mb-5 mb-5 mb-xl-0">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4" src="/image/gol.png" alt="..." />
+                    <h5 class="fw-bolder">골든리트리버</h5>
+                    <div class="fst-italic text-muted">CFO</div>
+                </div>
+            </div>
+            <div class="col mb-5 mb-5 mb-sm-0">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4" src="/image/rot.png" alt="..." />
+                    <h5 class="fw-bolder">로트와일러</h5>
+                    <div class="fst-italic text-muted">Operations Manager</div>
+                </div>
+            </div>
+            <div class="col mb-5">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4" src="/image/shet.png" alt="..." />
+                    <h5 class="fw-bolder">요크셔테리어</h5>
+                    <div class="fst-italic text-muted">CTO</div>
+                </div>
+            </div>
+-->
+            <!--<div class="col mb-5 mb-5 mb-xl-0">
+            </div>
+            <div class="col mb-5 mb-5 mb-xl-0">
+            </div>
+            <div class="col mb-5 mb-5 mb-sm-0">
+            </div>
+            <div class="col mb-5">
+            </div>-->
+        </div>
+
+            <!--
+
+        </div>
+-->
+</section>
+        <section class="py-5">
+            <div class="container px-5">
+                <div class="row gx-4">
+                    <div class="col-xl-6">
+                        <h2 class="fw-bolder fs-5 mb-4">방명록</h2>
+                        <!-- News item-->
+                        <th:block th:each="gDtoList:${pResponseDto.dtoList}"
+                                th:if="( ${pResponseDto} !=null and !#lists.isEmpty(${pResponseDto.dtoList}))
+                                        and ${gDtoListStat.index} <3">
+                        <div class="mb-4" >
+                            <div class="small text-muted" style="display :inline-block;">[[${gDtoList.title}]]
+                            </div>
+                            <div class="text-muted fst-italic mb-2" style="display :inline-block;">
+                                [[${#temporals.format(gDtoList.createdDate,'yyyy-MM-dd')}]]
+                            </div>
+                            <a class="link-dark" th:href="|@{/guestbook/read(gno=${gDtoList.gno}, page=${pResponseDto.page},
+                                        type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}|">
+                                <h5>[[${gDtoList.content}]]</h5></a>
+                        </div>
+                        </th:block>
+                        <div class="text-end mb-5 mb-xl-0">
+                            <a class="text-decoration-none" href="@{/guestbook/list}">
+                                More guestbooks
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <h2 class="fw-bolder fs-5 mb-4">게시판</h2>
+                        <!-- News item-->
+                        <th:block th:each="pDtoList:${responseDto.dtoList}"
+                                  th:if="( ${responseDto} !=null or !#lists.isEmpty(${responseDto.dtoList}) )
+                                   and ${pDtoListStat.index} <3">
+
+                        <div class="mb-4">
+                            <div class="small text-muted" style="display :inline-block;">
+                                [[${pDtoList.title}]]
+                            </div>
+                            <div class="text-muted fst-italic mb-2" style="display :inline-block;">
+                                [[${#temporals.format(pDtoList.createdDate,'yyyy-MM-dd')}]]
+                            </div>
+                            <a class="link-dark" th:href="|@{/post/update(id=${pDtoList.id})}&${pageRequestDto.getLink()}|">
+                                <h5>[[${pDtoList.content}]]</h5>
+                            </a>
+                        </div>
+                        </th:block>
+                        <div class="text-end mb-5 mb-xl-0">
+                            <a class="text-decoration-none"
+                               th:href="@{/post/list}">
+                                More posts
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- Testimonial section-->
+<div class="py-5 bg-light">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-7">
+                <div class="text-center">
+                    <div class="fs-4 mb-4 fst-italic">"Working with Start Bootstrap templates has saved me tons of development time when building new projects! Starting with a Bootstrap template just makes things easier!"</div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" alt="..." />
+                        <div class="fw-bold">
+                            Tom Ato
+                            <span class="fw-bold text-primary mx-1">/</span>
+                            CEO, Pomodoro
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+
+$(document).ready(function(){
+
+});
+</script>

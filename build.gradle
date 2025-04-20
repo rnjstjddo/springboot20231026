@@ -1,0 +1,127 @@
+//부트설정추가
+buildscript {
+    ext{
+        springBootVersion = '2.1.7.RELEASE'
+        querydslPluginVersion = '1.0.10' // 플러그인 버전
+        //queryDslVersion ='5.0.0'
+    }
+
+    repositories{
+        mavenCentral()
+        jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}") // querydsl 플러그인 의존성 등록
+
+
+    }
+}
+
+
+apply plugin : 'java'
+apply plugin : 'eclipse'
+apply plugin : 'org.springframework.boot'
+apply plugin : 'io.spring.dependency-management'
+
+apply plugin: "com.ewerk.gradle.plugins.querydsl" // Plugin 적용
+def querydslSrcDir = 'src/main/generated' // QClass 생성 위치
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+sourceCompatibility= 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    //롬복추가
+    compile('org.projectlombok:lombok')
+    annotationProcessor('org.projectlombok:lombok')
+
+    //jpa추가
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('com.h2database:h2')
+
+    //타임리프 의존성
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+
+
+    //ModelMapper 추가 entity ->dto 등 변환담당
+    compile('org.modelmapper:modelmapper:3.1.0')
+
+
+    compile("com.querydsl:querydsl-jpa") // querydsl
+    compile("com.querydsl:querydsl-apt") // querydsl
+
+    //compile("com.querydsl:querydsl-jpa:${queryDslVersion}")
+
+  /*  annotationProcessor(
+            "javax.persistence:javax.persistence-api",
+            "javax.annotation:javax.annotation-api",
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+    )*/
+    //타임리프레이아웃
+    compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0')
+
+    compile('org.springframework.boot:spring-boot-devtools')
+
+    //MariaDB
+    compile('org.mariadb.jdbc:mariadb-java-client:3.0.4')
+
+    //시큐리티
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.security:spring-security-test')
+
+    //gson
+    compile('com.google.code.gson:gson:2.9.0')
+
+    //소셜로그인
+    compile('org.springframework.boot:spring-boot-starter-oauth2-client')
+
+    //첨부파일
+    compile('net.coobird:thumbnailator:0.4.8')
+
+    //타임리프시큐리티
+    implementation ('org.thymeleaf.extras:thymeleaf-extras-springsecurity5')
+
+    //was세션유지
+    compile('org.springframework.session:spring-session-jdbc')
+    //implementation('org.springframework.session:spring-session-jdbc')
+}
+
+tasks.withType(Test) {
+    enabled = false
+}
+
+/*
+
+sourceSets{
+    main{
+        java{
+            srcDirs=["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
+}
+*/
+
+
+querydsl {
+    library = "com.querydsl:querydsl-apt"
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
+}

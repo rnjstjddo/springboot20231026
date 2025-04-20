@@ -1,0 +1,504 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/article_about_admin_navs :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <a type="button" class="btn btn-outline-success"
+               th:href="@{/admin/home/home?yearmonth={localDate}(localDate=${localDate})}">
+                달력으로이동
+            </a>
+            <a type="button" class="btn btn-outline-primary">
+                검색일자 [[${localDate}]]
+            </a>
+            <br><br>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='dogsell' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/dogsell/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=dogsell|">
+                        분양글
+                        <span class="badge text-bg-warning">[[${count.dogsellcount}]]</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbook' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/guestbook/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbook|">
+                        방명록
+                        <span class="badge text-bg-warning">[[${count.guestcount}]]</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbookreply' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/guestbookreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbookreply|">
+                        방명록댓글
+                        <span class="badge text-bg-warning">[[${count.guestreplycount}]]</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='posts' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/post/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=posts|">
+                        게시글
+                        <span class="badge text-bg-warning">[[${count.postcount}]]</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='postreply' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/postreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=postreply|">
+                        게시글댓글
+                        <span class="badge text-bg-warning">[[${count.postreplycount}]]</span>
+
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='inquiry' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/inquiry/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=inquiry|">
+                        문의글
+                        <span class="badge text-bg-warning">[[${count.inquirycount}]]</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 " th:classappend="${tabtitle} =='member' ? active : ''"
+                       aria-current="page" th:href="|@{/admin/member/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=member|">
+                        회원정보
+                        <span class="badge text-bg-warning">[[${count.membercount}]]</span>
+                    </a>
+                </li>
+            </ul>
+            <br><br>
+            <div>
+                <a class="btn btn-outline-secondary" type="button" href="/admin/tab/inquiry">문의 전체목록페이지로 이동</a>
+            </div>
+
+                <form th:action="@{/admin/inquiry/list}" method="get">
+                    <input type="hidden" name="yearmonth" th:value="${localDate}">
+                    <input type="hidden" name="tabtitle" th:value="inquiry">
+                    <input type="hidden" name="dogsellcount" th:value="${count.dogsellcount}">
+                    <input type="hidden" name="guestcount" th:value="${count.guestcount}">
+                    <input type="hidden" name="guestreplycount" th:value="${count.guestreplycount}">
+                    <input type="hidden" name="postcount" th:value="${count.postcount}">
+                    <input type="hidden" name="postreplycount" th:value="${count.postreplycount}">
+                    <input type="hidden" name="inquirycount" th:value="${count.inquirycount}">
+
+
+
+                    <div class="row mt-3">
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <select class="form-select" name="type">
+                                    <option th:selected ="${pageRequestDTO.type == null}" value="" >---</option>
+                                    <option th:selected ="${pageRequestDTO.type == 'c'}" value="c">내용</option>
+                                    <option th:selected ="${pageRequestDTO.type == 'w'}" value="w">작성자</option>
+                                    <option th:selected ="${pageRequestDTO.type == 'a'}" value="a">답변여부(false/true)</option>
+                                    <option th:selected ="${pageRequestDTO.type == 'cw'}" value="tc">내용&작성자</option>
+                                </select>
+                            </div>
+
+                            <input type="text" class="form-control" name="keyword"
+                                   th:placeholder="|${localDate} 일자 내에서 검색이 가능합니다.|" th:value="${pageRequestDTO.keyword}">
+
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary btn-search searchBtn" type="submit">검색</button>
+                                <button type="button" class="btn btn-outline-secondary" id="reset">초기화</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- 검색처리 -->
+
+                <br><br>
+                <table class="table table-hover">
+                    <tr>
+                        <th scope="col" width="100px">번호</th>
+                        <th scope="col" width="500px">문의내용</th>
+                        <th scope="col" width="100px">작성자</th>
+                        <th scope="col" width="200px">전화</th>
+                        <th scope="col" width="200px">이메일</th>
+                        <th scope="col" width="100px">답변여부</th>
+
+                    </tr>
+
+                    <tr th:each="dto:${pResponseDtoList}">
+                        <td id="id">[[${dto.innum}]]</td>
+                        <td>[[${dto.content}]]</td>
+                        <td>[[${dto.writer}]]</td>
+                        <td>[[${dto.phone}]]</td>
+                        <td>[[${dto.email}]]</td>
+                        <!--<td>[[${dto.complete}]]</td>-->
+                        <td>
+                            <th:block th:if="${#strings.equals(dto.complete,true)}">
+                                완료
+                                <button type="button" class="btn btn-outline-danger btn-sm inquiryReplyShowModal"
+                                        th:data-innum="${dto.innum}" th:data-content="${dto.content}" th:data-writer="${dto.writer}"
+                                        th:data-createddate="${dto.createdDate}">답변보기
+                                </button>
+                            </th:block>
+                            <th:block th:if="${#strings.equals(dto.complete,false)}">
+                                미완료
+                                <button type="button" class="btn btn-outline-success btn-sm inquiryReplyModal"
+                                        th:data-innum="${dto.innum}" th:data-content="${dto.content}" th:data-writer="${dto.writer}"
+                                        th:data-createddate="${dto.createdDate}">답변작성
+                                </button>
+                            </th:block>
+                        </td>
+                    </tr>
+                </table>
+
+                <th:block th:if="${pResponseDtoList} != null">
+                    <nav  aria-label="Page navigation example">
+                        <div>
+                            <ul class="pagination">
+                                <li class="page-item pagination_button " th:if="${pResponseDto.prev}">
+                                    <a  class="page-link" aria-label="Previous" th:data-num="${pResponseDto.start-1}"><span aria-hidden="true">&laquo;</span></a>
+                                </li>
+
+                                <th:block th:each="i:${#numbers.sequence(pResponseDto.start, pResponseDto.end)}" th:if="${pResponseDto.page}">
+                                    <li class="page-item pagination_button " th:classappend="${pResponseDto.page == i } ? active : ''" >
+                                        <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+                                <li class="page-item pagination_button " th:if="${pResponseDto.next}">
+                                    <a  class="page-link" aria-label="Next" th:data-num="${pResponseDto.end+1}"><span aria-hidden="true">&raquo;</span></a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </nav>
+                </th:block>
+
+                <br>
+                <br>
+
+                <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} ==null and
+                        ${pageRequestDTO.keyword} ==null">
+                    <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                    [[${localDate}]] 일자에 등록된 문의글이 없습니다.
+                </th:block>
+
+
+                <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} !=null and
+                        ${pageRequestDTO.keyword} !=null">
+                    <div style="text-align:center;">
+                        <b>검색 결과가 없습니다. </b> &nbsp;&nbsp;
+                    </div>
+                </th:block>
+                <br>
+
+            </form>
+        </article>
+
+
+
+        <!--답변글 작성 모달창열기 -->
+        <div class="modal inquiryReplyModalDiv" tabindex="-1"  >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title inquiryReplyModalDivHeader"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <p class="inquiryReplyModalDivBodyOriginal">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            답변작성<textarea style="width:100%;height:6.25em;border:none;resize:none;"
+                                      id="inquiryReplyModalDivBody" placeholder="답변내용을 작성해주세요"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger btn-sm inquiryReplyModalDivSendBtn">답변작성완료</button>
+                        <button type="button" class="btn btn-outline-warning btn-sm inquiryReplyModalDivBtn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--답변보기 모달창열기 -->
+        <div class="modal inquiryReplyModalShowDiv" tabindex="-1"  >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title inquiryReplyModalShowDivHeader"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <p class="inquiryReplyModalShowDivBodyOriginal">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            답변내용<textarea style="width:100%;height:6.25em;border:none;resize:none;"
+                                      id="inquiryReplyModalShowDivBody"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-warning btn-sm inquiryReplyModalShowDivBtn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 답변보기 -->
+
+
+<script th:inline="javascript">
+
+
+
+var localDate = [[${localDate}]]
+var dogsellcount = [[${count.dogsellcount}]]
+var guestcount = [[${count.guestcount}]]
+var guestreplycount = [[${count.guestreplycount}]]
+var postcount = [[${count.postcount}]]
+var postreplycount = [[${count.postreplycount}]]
+var inquirycount = [[${count.inquirycount}]]
+
+function dateFormat(date){
+//-console.log("admin_inquiry_list.html 날짜처리 진입 파라미터 ->"+date);
+    var date =new Date(date);
+
+    return date.getFullYear()+
+    '-'+(date.getMonth()+1)+'-'+date.getDate()+' '+ date.getHours()+':'+date.getMinutes();
+}
+
+
+
+
+$(document).ready(function(){
+
+    //검색+페이지이동
+    $("a.page-link").on("click", function(e){
+        //-console.log("admin_inquiry_list.html 검색+페이지이동 처리 클릭이벤트 진입");
+        e.preventDefault();
+        var page = $(this).data("num");
+
+        $("form").append(`<input type='hidden' name='page' value="${page}">`);
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="inquiry">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+        var href = window.location.search;
+        const urlParams = new URLSearchParams("${href}");
+        var type = urlParams.get("type");
+        var keyword = urlParams.get("keyword");
+        //-console.log("admin_inquiry_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 얻기 -> "+ href);
+        //-console.log("admin_inquiry_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 keyword 얻기 -> "+ keyword);
+        //-console.log("admin_inquiry_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 type 얻기 -> "+ type);
+
+        //$("form").attr("action",`/admin/inquiry/list${href}`).submit();
+        //$("form").attr("action",`/admin/inquiry/list?page=${page}&yearmonth=${localDate}&tabtitle=inquiry&type=${type}&keyword=${keyword}`).submit();
+        $("form").submit();
+    });//검색+페이지이동
+
+
+    $("#reset").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_inquiry_list.html 검색+페이지이동 reset버튼 클릭이벤트 진입");
+
+        //$("form").empty();
+        $("select[name=type]").val("");
+        $("input[name=keyword]").val("");
+
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="inquiry">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+        var href = window.location.search;
+        //-console.log("admin_inquiry_list.html 검색 초기화 버튼클릭 진입 현재 쿼리스트링 얻기 -> "+ href);
+        //$("form").attr("action",`/admin/inquiry/list?yearmonth=${localDate}&tabtitle=inquiry`).submit();
+        $("form").submit();
+    });
+
+
+    //관리자페이지 전체문의글에서 답변시 모달창으로 작성
+    $(".inquiryReplyModal").on("click", function(){
+    //inquiryReplyModalDiv inquiryReplyModalDivHeader inquiryReplyModalDivBody inquiryReplyModalDivBtn
+        //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 클릭이벤트 진입");
+        //innum content writer createdDate
+        var innumVal =$(this).data("innum");
+        var contentVal =$(this).data("content");
+        var writerVal =$(this).data("writer");
+        var createdDateVal =$(this).data("createddate");
+        //-console.log("날짜확인 -> "+ createdDateVal);
+        //날짜변환
+        createdDateVal= dateFormat(createdDateVal);
+
+        $(".inquiryReplyModalDivHeader").html(innumVal+"번 문의글 | 문의일자 "+createdDateVal);
+        $(".inquiryReplyModalDivBodyOriginal").html(contentVal)
+        $(".inquiryReplyModalDivSendBtn").attr("data-innum",innumVal);
+        $(".inquiryReplyModalDiv").show();
+    });//끝 on()클릭이벤트진입
+
+
+    //답변작성완료 버튼 클릭시
+    $(".inquiryReplyModalDivSendBtn").on("click", function(){
+        //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 완료 이벤트버튼 클릭 진입");
+        var replyVal = $("#inquiryReplyModalDivBody").val();
+        var innumVal =$(this).data("innum");
+        //InquiryReplyDto Long inrenum / String content / Long innum / InquiryDto inquiryDto / LocalDateTime createdDate, modifiedDate;
+
+        var data ={innum: innumVal, content: replyVal}
+
+        $.ajax({
+            url:'/admin/inquiry/register',
+            method:'post',
+            data:JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            dataType:'text',
+            success: function(result){
+                if(result == "true"){
+                    //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 성공 진입 -> "+result);
+                    alert("문의글에 대한 답변이 전달되었습니다!")
+                    $("#inquiryReplyModalDivBody").val("");
+                    location.replace(`/admin/tab/inquiry`);
+                }else{
+                    //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 실패 진입 -> "+result);
+                    alert("문의글에 대한 답변이 전달되지 않았습니다. 다시 한번 확인해주세요!")
+                    $("#inquiryReplyModalDivBody").val("");
+                    location.replace(`/admin/tab/inquiry`)
+                }
+            },
+
+            fail : function(){
+                //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 실패 진입")
+                alert("문의글에 대한 답변이 전달되지 않았습니다. 다시 한번 확인해주세요!")
+                $("#inquiryReplyModalDivBody").val("");
+                location.replace(`/admin/tab/inquiry`)
+            }
+        });//끝 $.ajax
+
+    });//끝 on()클릭 이벤트직입 답변글작성완료
+
+    //답변글작성 모달창 닫기이벤트진입
+    $(".inquiryReplyModalDivBtn").on("click",function(){
+        //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글작성 모달창 닫기 이벤트 진입");
+        $(".inquiryReplyModalDiv").hide();
+    });//끝 on() 답변글작성 모달창닫기이벤트
+
+
+    //답변보기 모달창열기
+    $(".inquiryReplyShowModal").on("click", function(){
+    //inquiryReplyModalShowDiv inquiryReplyModalShowDivHeader inquiryReplyModalShowDivBody inquiryReplyModalShowDivBtn
+        //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글보기 클릭이벤트 진입");
+        //innum content writer createdDate
+
+        var innumVal =$(this).data("innum");
+        var contentVal =$(this).data("content");
+        var writerVal =$(this).data("writer");
+        var createdDateVal =$(this).data("createddate");
+        //-console.log("날짜확인 -> "+ createdDateVal);
+
+        //날짜변환
+        createdDateVal= dateFormat(createdDateVal);
+
+        $.ajax({
+            url:'/admin/inquiry/'+innumVal,
+            method:'post',
+            contentType: "application/json;charset=utf-8",
+            dataType:'json',
+            success: function(result){
+                if(result !=null){
+                    //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글보기 성공 진입 ");
+
+                    $(".inquiryReplyModalShowDivHeader").html(innumVal+"번 문의글 | 문의일자 "+createdDateVal);
+                    $(".inquiryReplyModalShowDivBodyOriginal").html(contentVal);
+                    //-console.log("답변보기내용 -> ");
+                    //-console.log(result["content"]);
+                    $("#inquiryReplyModalShowDivBody").val(result.content);
+                    //$("#inquiryReplyModalShowDivBody").val(result["content"]);
+                    $(".inquiryReplyModalShowDiv").show();
+
+                }else{
+                    //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글보기 실패 진입 ");
+                    alert("문의글에 대한 답변이 확인되지 않습니다.")
+                    location.replace(`/admin/tab/inquiry`)
+                }
+            },
+
+            fail : function(){
+                //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글보기 실패 진입")
+                alert("문의글에 대한 답변이 확인되지 않습니다.")
+                location.replace(`/admin/tab/inquiry`)
+            }
+        });//끝 $.ajax
+
+
+    });//답변보기 모달창열기
+
+    //답변보기 모달창 닫기이벤트진입
+    $(".inquiryReplyModalShowDivBtn").on("click",function(){
+        //-console.log("관리자페이지 admin_inquiry_list.html 문의글 전체목록에서 답글보기 모달창 닫기 이벤트 진입");
+        $(".inquiryReplyModalShowDiv").hide();
+    });//끝 on() 답변보기 모달창닫기이벤트
+
+
+
+//검색버튼클릭시
+    $(".searchBtn").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입");
+        var selectvalue = $("select[name=type]").val();
+        //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+        var selectkeyword = $("input[name=keyword]").val();
+        //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+        if(selectvalue =="" || selectkeyword == ""){
+            //-console.log("admin_inquiry_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+            alert("검색조건을 선택하시고 검색어를 입력해주세요");
+            return;
+        }
+
+        if(selectvalue !="" && selectkeyword != ""){
+            //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+            //$("form").attr("action", `/admin/inquiry/list?yearmonth=${localDate}&tabtitle=inquiry`).submit();
+            $("form").submit();
+        }
+    });
+
+     $(".searchBtn").on("keyup",function(key){
+        if(key.keyCode==13){
+            //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입");
+            var selectvalue = $("select[name=type]").val();
+            //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+            var selectkeyword = $("input[name=keyword]").val();
+            //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+            if(selectvalue =="" || selectkeyword == ""){
+                //-console.log("admin_inquiry_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+                alert("검색조건을 선택하시고 검색어를 입력해주세요");
+                return;
+            }
+
+            if(selectvalue !="" && selectkeyword != ""){
+                //-console.log("admin_inquiry_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+                //$("form").attr("action", `/admin/inquiry/list?yearmonth=${localDate}&tabtitle=inquiry`).submit();
+                $("form").submit();
+            }
+        }
+     });
+
+
+});
+</script>
+</th:block>
+</th:block>
+
+</html>

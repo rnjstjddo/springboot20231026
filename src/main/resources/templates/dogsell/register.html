@@ -1,0 +1,124 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about_dog :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    강아지분양 등록
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/dogsell/list}|">목록으로</a>
+
+
+                <form>
+                  <!--  <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
+                    <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+-->
+                    <br>
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title"  id="title" placeholder="제목을 작성해주세요" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                         무게(단위 :kg, 소수점 첫째자리까지 허용)
+                        <input class="form-control" type="text"  name="weight" id="weight"   placeholder="무게를 입력해주세요" required/>
+                    </div>
+
+                    <br>
+                    <div class="mb-3">
+                        성별(암,수 한글자만 입력해주세요)
+                        <input class="form-control" type="text"  name="gender" id="gender" placeholder="예시)암" required/>
+                    </div>
+                    <br>
+
+                    <th:block th:if="${loginMember !=null}">
+                        <div class="mb-3">
+                            작성자
+                            <input class="form-control writer" type="text"  name="writer"  id="writer"  th:value="${loginMember}" readonly/>
+                        </div>
+                    </th:block>
+                    <br>
+                    <div class="mb-3">
+                        품종
+                        <input class="form-control" type="text"  name="type" id="type" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        나이(단위 :살, 소수점 첫째자리까지만 입력해주세요)
+                        <input class="form-control" type="text"  name="age"  id="age"  placeholder="예시)4.2" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        이름
+                        <input class="form-control" type="text"  name="name" id="name"  placeholder="강아지의 이름을 입력해주세요" required/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        예방접종 내역 (예)없음)
+                        <input class="form-control" type="text"  name="health" id="health" placeholder="" required/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        희망분양가격 (단위: 만)
+                        <input class="form-control" type="text"  name="price" id="price" placeholder="" required/>
+                    </div>
+
+                    <br>
+
+                    <div class="mb-3">
+                        강아지특징을 입력해주세요
+                        <textarea class="form-control"   name="content" id="content" rows="5" placeholder="내용을 작성해주세요"required></textarea>
+                    </div>
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        강아지사진을 올려주세요
+                        <input class="form-control file" type="file"  id="file"  name="dsImageList" placeholder="첨부파일을 선택해주세요"  multiple required/>
+                    </div>
+                    <br>
+
+                    <div>
+                         <div class="row row-cols-1 row-cols-md-3 g-4 uploadResult">
+                             <ul>
+                             </ul>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+
+
+                    <div class="col-12" style="text-align: center;">
+                        <button type="button" style="display:inline-block;" class="btn btn-outline-primary" id="registerBtn">분양게시글 등록하기</button>
+                        <button type="reset"  style="display:inline-block;" class="btn btn-outline-secondary">초기화</button>
+
+                    </div>
+                </form>
+
+            </div>
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+registerjs.init();
+</script>
+
+</html>

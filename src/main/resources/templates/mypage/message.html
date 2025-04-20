@@ -1,0 +1,257 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/pricing_mypage :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <!-- Pricing section-->
+        <section class="py-5">
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bolder">마이페이지 > 쪽지 목록</h3>
+                    <p class="lead fw-normal text-muted mb-0"></p>
+                </div>
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    보낸쪽지 목록
+                </div>
+                <div class="row gx-1 justify-content-center">
+                    <div class="list-group">
+
+                        <th:block th:if="${seDtoList != null or seDtoList.size() > 0}" th:each="slist:${seDtoList}">
+                        <span class="smRemoveCheckSpan">
+                           <input class="form-check-input me-1 smRemoveCheck" type="checkbox"
+                                  th:data-name="${slist.name}" th:data-number="${slist.number}" th:data-date="${slist.createdDate}"
+                                    th:data-messageid="${slist.messageid}">
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-warning">
+                                <i class="bi bi-check text-primary">보낸이</i>
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">[[${slist.name}]]</h6>
+                                    <small class="smDate"></small>
+                                 </div>
+                                <i class="bi bi-check text-primary">내용</i>
+                                <p class="mb-1">
+                                    [[${slist.content}]]
+                                </p>
+                                <i class="bi bi-check text-primary">연락처 Email</i>
+                                <small>[[${slist.email}]]</small>
+                                <i class="bi bi-check text-primary"> Phone</i>
+                                <small class="smformatNumber"></small>
+                            </a>
+                        </span>
+                        </th:block>
+                         <th:block th:if="${seDtoList == null or seDtoList.size() == 0}" >
+                             <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                 <i class="bi bi-envelope"></i>
+                             </div>
+                             [[${memberDTO.getName()}]]님 보낸쪽지함이 비어있습니다.
+                         </th:block>
+                        <div style="display:none" class="emptySend">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            [[${memberDTO.getName()}]]님 보낸쪽지함이 비어있습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    받은쪽지 목록
+                </div>
+                <div class="row gx-1 justify-content-center">
+                    <div class="list-group">
+                        <span class="rmRemoveCheckSpan">
+
+
+                            <th:block th:if="${reDtoList != null or reDtoList.size() > 0}" th:each="rlist:${reDtoList}">
+                            <input class="form-check-input me-1 rmRemoveCheck" type="checkbox"
+                            th:data-name="${rlist.name}" th:data-number="${rlist.number}" th:data-date="${rlist.createdDate}"
+                            th:data-messageid="${rlist.messageid}">
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-warning">
+                                <i class="bi bi-check text-primary">보낸이</i>
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">[[${rlist.name}]]</h6>
+                                    <small class="rmDate"></small>
+                                 </div>
+                                <i class="bi bi-check text-primary">내용</i>
+                                <p class="mb-1">
+                                    [[${rlist.content}]]
+                                </p>
+                                <i class="bi bi-check text-primary">연락처 Email</i>
+                                <small>[[${rlist.email}]]</small>
+                                <i class="bi bi-check text-primary"> Phone</i>
+                                <small class="rmformatNumber"></small>
+                            </a>
+                            </th:block>
+                             <th:block th:if="${reDtoList == null or reDtoList.size() == 0}">
+                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                     <i class="bi bi-envelope"></i>
+                                 </div><br>
+                                 [[${memberDTO.getName()}]]님 받은쪽지함이 비어있습니다.
+                             </th:block>
+                            <div style="display:none"  class="emptyReceive">
+                                 <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                         <i class="bi bi-envelope"></i>
+                                 </div><br>
+                                     [[${memberDTO.getName()}]]님 받은쪽지함이 비어있습니다.
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </th:block>
+    </th:block><!-- content -->
+</th:block>
+
+
+<script th:inline="javascript">
+
+
+
+var countSender = [[${countSender}]];
+var countRecipient = [[${countRecipient}]];
+
+//-console.log("message.html countSender -> "+countSender +",countRecipient"+countRecipient)
+
+$(document).ready(function(){
+
+var smnumber=$(".smRemoveCheck").data("number");
+var rmnumber=$(".rmRemoveCheck").data("number");
+var smDate =$(".smRemoveCheck").data("date");
+var rmDate =$(".rmRemoveCheck").data("date");
+
+(function(){
+    //-console.log("message.list 즉시실행함수 내 보낸쪽지목록 핸드폰번호 포맷처리 함수 진입 파라미터 -> "+smnumber);
+    //-console.log("message.list 즉시실행함수 내 받은쪽지목록 핸드폰번호 포맷처리 함수 진입 파라미터 -> "+rmnumber);
+
+    var rmformatNum = '';
+    var smformatNum = '';
+
+	try{
+		if (smnumber.length == 11 || rmnumber.length ==11) {
+			smformatNum = smnumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+			rmformatNum = rmnumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+
+		} else if (smnumber.length == 8 || rmnumber.length == 8) {
+			smformatNum = smnumber.replace(/(\d{4})(\d{4})/, '$1-$2');
+	        rmformatNum = rmnumber.replace(/(\d{4})(\d{4})/, '$1-$2');
+		} else {
+			if (smnumber.indexOf('02') == 0 || rmnumber.indexOf('02') == 0) {
+				smformatNum = smnumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+				rmformatNum = rmnumber.replace(/(\d{2})(\d{4})(\d{4})/, '$1-$2-$3');
+			} else {
+				smformatNum = smnumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+				rmformatNum = rmnumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+			}
+		}
+	} catch(e) {
+		rmformatNum = rmnumber;
+		smformatNum = smnumber;
+	}
+    $(".rmformatNumber").html(rmformatNum);
+    $(".smformatNumber").html(smformatNum);
+
+    var smdate =new Date(smDate);
+    //-console.log("message.html 즉시실행함수 내 날짜출력 보낸쪽지목록 -> "+ smdate);
+    smdate = smdate.getFullYear()+'/'+(smdate.getMonth()+1)+'/'+smdate.getDate()+' '+ smdate.getHours()+':'+smdate.getMinutes();
+    $(".smdate").html(smdate);
+
+    var rmdate =new Date(rmDate);
+    //-console.log("message.html 즉시실행함수 내 날짜출력 받은쪽지목록 -> "+ rmdate);
+    rmdate = rmdate.getFullYear()+'/'+(rmdate.getMonth()+1)+'/'+rmdate.getDate()+' '+ rmdate.getHours()+':'+rmdate.getMinutes();
+    $(".rmdate").html(rmdate);
+
+}());
+
+$(".smRemoveCheck").on("click", function(){
+    //-console.log("message.list 보낸쪽지메시지 checkbox삭제버튼 클릭시");
+    if(confirm("해당 메시지를 삭제하시겠습니까? 삭제하시면 복구가 불가능합니다.")){
+    var smRemoveCheckSpan =$(this).closest(".smRemoveCheckSpan")
+    //-console.log(smRemoveCheckSpan)
+    var nameVal = $(this).data("name");
+    var numberVal = $(this).data("number");
+    var messageid= $(this).data("messageid");
+
+    var data ={name:nameVal, number:numberVal, messageid:messageid};
+
+    //-console.log("message.list 보낸쪽지 갯수 ->"+ countSender)
+
+    //-console.log("message.list 보낸쪽지메시지 checkbox삭제버튼 클릭시 -$.ajax 보낼 데이터 출력 -> ");
+    //-console.log(data)
+
+        $.ajax({
+            url:"/mypage/message/removeSender",
+            type:"post",
+            contentType:"application/json;charset=utf-8",
+            data: JSON.stringify(data),
+            success:function(result){
+                //-console.log("message.list 보낸쪽지메시지 checkbox삭제버튼 클릭시 -$.ajax success() 진입");
+                if(result ==="success"){
+                    countSender = countSender-1
+
+                    if( countSender ==0){
+                        $(".emptySend").show()
+                    }
+
+                    smRemoveCheckSpan.remove();
+                    alert("삭제 완료되었습니다.");
+
+                }
+            }//success
+        });//$.ajax
+    }else{
+     $(".smRemoveCheck").attr("checked", false);
+    }//if-else문
+});//삭제클릭시
+
+
+
+$(".rmRemoveCheck").on("click", function(){
+    //-console.log("message.list 받은쪽지메시지 checkbox삭제버튼 클릭시");
+    if(confirm("해당 메시지를 삭제하시겠습니까? 삭제하시면 복구가 불가능합니다.")){
+
+    var rmRemoveCheckSpan =$(this).closest(".rmRemoveCheckSpan")
+    //-console.log(rmRemoveCheckSpan)
+
+    var nameVal = $(this).data("name");
+    var numberVal = $(this).data("number");
+    var messageid= $(this).data("messageid");
+
+    var data ={name:nameVal, number:numberVal,messageid:messageid};
+    //-console.log("message.list 받은쪽지메시지 checkbox삭제버튼 클릭시 -$.ajax 보낸 데이터 출력 -> ");
+    //-console.log(data);
+    //-console.log("message.list 받은쪽지 갯수 ->"+ countRecipient)
+
+        $.ajax({
+            url:"/mypage/message/removeRecipient",
+            type:"post",
+            contentType:"application/json;charset=utf-8",
+            data: JSON.stringify(data),
+            success:function(result){
+                //-console.log("message.list 받은쪽지메시지 checkbox삭제버튼 클릭시 -$.ajax success() 진입");
+                if(result ==="success"){
+                    countRecipient =countRecipient-1
+                    if( countRecipient ==0){
+                        $(".emptyReceive").show()
+                    }
+                    rmRemoveCheckSpan.remove();
+                    alert("삭제 완료되었습니다.");
+
+                }
+            }//success
+        });//$.ajax
+    }else{
+        $(".rmRemoveCheck").attr("checked", false);
+    }//if-else문
+});//삭제클릭시
+});
+</script>
+</html>

@@ -1,0 +1,82 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="~{layout/article_about_membermodify :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    회원정보 확인 및 수정
+                </div>
+
+                <!-- <a class="btn btn-outline-success" th:href="|@{/}?${pageRequestDto.getLink()}|">목록으로</a>-->
+
+                <a class="btn btn-outline-success" th:href="@{/home/home}">홈화면</a>
+                <br>
+                <br>
+                <b style="color:#be0000;">[[${memberDTO.name}]]님 반갑습니다^^ 현재 사이트에서 이용할 닉네임을 새롭게 정해주세요!
+                닉네임은 현재 페이지에서 한번 정하면 수정이 불가능합니다!!!</b>
+
+                <br>
+                <br>
+                <form method="post" action="/member/updateSocialJoin" >
+
+                    <div class="col-12">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" class="form-control" name="name" id="name"
+                               placeholder="닉네임을 입력해주세요" th:value="${memberDTO.name}" required>
+                    </div>
+
+
+                    <th:block th:if="${memberDTO.fromSocial == false}">
+                    <br>
+                    <br>
+                    <div class="col-12">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" class="form-control" name="password" autocomplete="off"
+                               id="password" placeholder="비밀번호를 입력해주세요" th:value="${memberDTO.password}"  required>
+                    </div>
+
+                    </th:block>
+                    <br>
+                    <br>
+                    <div class="col-12">
+                        <label class="form-label">이메일</label>
+                        <input type="text" class="form-control" name="email" id="email"
+                               placeholder="이메일을 입력해주세요" th:value="${memberDTO.email}" readonly>
+                    </div>
+
+
+                    <br>
+                    <br>
+<!--
+
+                    <div class="col-12">
+                        <label class="form-label">자동로그인</label>
+                        <input type="checkbox" name="remember-me" id="remember-me">
+                    </div>
+-->
+
+                    <div style="display:inline-block;text-align:right;">
+                        <button type="reset" class="btn btn-outline-secondary">초기화</button>
+                        <button type="button" class="btn btn-outline-warning" id="updateSocialJoinBtn">회원정보수정</button>
+                    </div>
+
+
+                </form>
+            </div>
+        </article>
+
+    </th:block>
+<script th:inline="javascript">
+</script>
+</th:block>
+
+</html>

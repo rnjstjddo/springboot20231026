@@ -1,0 +1,25 @@
+#version: "3" 이제 없어도된다.
+services:
+  blue:
+    image: rnjstjddo/dogservice
+    container_name: blue
+    restart: always
+    ports:
+      - "8081:8081"
+    volumes:
+      #- ./:/home/ubuntu
+      - /etc/timezone:/etc/timezone
+      - /home/ubuntu/upload231026:/home/ubuntu/upload231026
+    command: sleep infinity
+
+  green:
+    image: rnjstjddo/dogservice #이건 Workflow에서 넘어온변수사용시
+    container_name: green
+    restart: always
+    ports:
+      - "8082:8082"
+    volumes:
+      #- ./:/home/ubuntu
+      - /etc/timezone:/etc/timezone
+      - /home/ubuntu/upload231026:/home/ubuntu/upload231026
+    command: sleep infinity

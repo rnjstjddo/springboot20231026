@@ -1,0 +1,402 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/article_about_admin_navs :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+                <a type="button" class="btn btn-outline-success"
+                   th:href="@{/admin/home/home?yearmonth={localDate}(localDate=${localDate})}">
+                    달력으로이동
+                </a>
+                <a type="button" class="btn btn-outline-primary">
+                    검색일자 [[${localDate}]]
+                </a>
+                <br><br>
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='dogsell' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/dogsell/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=dogsell|">
+                            분양글
+                            <span class="badge text-bg-warning">[[${count.dogsellcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbook' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/guestbook/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbook|">
+                            방명록
+                            <span class="badge text-bg-warning">[[${count.guestcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbookreply' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/guestbookreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbookreply|">
+                            방명록댓글
+                            <span class="badge text-bg-warning">[[${count.guestreplycount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='posts' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/post/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=posts|">
+                            게시글
+                            <span class="badge text-bg-warning">[[${count.postcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='postreply' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/postreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=postreply|">
+                            게시글댓글
+                            <span class="badge text-bg-warning">[[${count.postreplycount}]]</span>
+
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='inquiry' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/inquiry/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=inquiry|">
+                            문의글
+                            <span class="badge text-bg-warning">[[${count.inquirycount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='member' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/member/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=member|">
+                            회원정보
+                            <span class="badge text-bg-warning">[[${count.membercount}]]</span>
+                        </a>
+                    </li>
+                </ul>
+                <br>
+                <br>
+
+                <div>
+                    <a class="btn btn-outline-secondary" type="button" href="/admin/tab/dogsell">분양글 전체목록페이지로 이동</a>
+                </div>
+
+
+
+                <form th:action="@{/admin/dogsell/list}" method="get">
+                    <input type="hidden" name="yearmonth" th:value="${localDate}">
+                    <input type="hidden" name="tabtitle" th:value="dogsell">
+                    <input type="hidden" name="dogsellcount" th:value="${count.dogsellcount}">
+                    <input type="hidden" name="guestcount" th:value="${count.guestcount}">
+                    <input type="hidden" name="guestreplycount" th:value="${count.guestreplycount}">
+                    <input type="hidden" name="postcount" th:value="${count.postcount}">
+                    <input type="hidden" name="postreplycount" th:value="${count.postreplycount}">
+                    <input type="hidden" name="inquirycount" th:value="${count.inquirycount}">
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <select class="form-select" name="type">
+                                        <option th:selected ="${pageRequestDTO.type == null}" value="" >---</option>
+                                        <option th:selected ="${pageRequestDTO.type == 't'}" value="t">품종</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'c'}" value="c">분양완료(false/true)</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'w'}" value="w">작성자</option>
+                                    </select>
+                                </div>
+
+                                <input type="text" class="form-control" name="keyword"
+                                       th:placeholder="|${localDate} 일자 내에서 검색이 가능합니다.|"  th:value="${pageRequestDTO.keyword}">
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-search searchBtn" type="button">검색</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="reset">초기화</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+
+
+                <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} ==null and
+                        ${pageRequestDTO.keyword} ==null">
+                    <br><br>
+                    <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                    [[${localDate}]] 일자에 등록된 분양글이 없습니다.
+                </th:block>
+
+                <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} !=null and
+                        ${pageRequestDTO.keyword} !=null">
+                    <br><br>
+                    <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                    <b>검색 결과가 없습니다. </b> &nbsp;&nbsp;
+                </th:block>
+
+                <th:block th:each="dogSell:${pResponseDtoList}" th:if="${!#lists.isEmpty(pResponseDtoList)}">
+                    <div style="height:800px;float:left;margin-right:20px;">
+                        <p class="fw-bold fs-5">[[${#temporals.format(dogSell.createdDate, 'yyyy-MM-dd')}]] 분양글</p>
+                        <div class="card" style="width:18rem;">
+                            <div style="text-align:center;">
+                                <img style="height:150px;width:auto;"
+                                     th:src="|/dogselldisplay?fileName=${dogSell.dsiDtoList[0].getImageURL()}|"
+                                     class="card-img-top"/>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><span class="fw-bolder">분양결과</span>&nbsp;
+                                    [[${dogSell}]]
+
+
+<!--                                    <th:block th:if="${dogSell.complete== ''}">-->
+<!--                                        분양완료-->
+<!--                                    </th:block>-->
+<!--                                    <th:block th:unless="${dogSell.complete== ''}">-->
+<!--                                        분양중 [[${dogSell.complete}]]-->
+<!--                                    </th:block>-->
+                                </li>
+                                <li class="list-group-item"><span class="fw-bolder">특징</span>&nbsp;
+                                    <span style="display:block; overflow:hidden; text-overflow:ellipsis; width:250px; height:100px;">
+                                    <button type="button" th:data-dno="${dogSell.dno}" th:data-content="${dogSell.content}" class="btn btn-outline-success btn-sm contentAll">전체보기</button> [[${dogSell.content}]]
+                                </span>
+                                </li>
+                                <li class="list-group-item"><sapn class="fw-bolder">분양번호</sapn>&nbsp;[[${dogSell.dno}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">작성자</sapn>&nbsp;[[${dogSell.membername}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">나이</sapn>&nbsp;[[${dogSell.age}]]세</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">무게</sapn>&nbsp;[[${dogSell.weight}]]kg</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">품종</sapn>&nbsp;[[${dogSell.type}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">암수</sapn>&nbsp;[[${dogSell.gender}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">건강상태</sapn>&nbsp;[[${dogSell.health}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">작성시간</sapn>&nbsp;[[${#temporals.format(dogSell.createdDate, 'yyyy-MM-dd HH:mm:ss')}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">수정시간</sapn>&nbsp;[[${#temporals.format(dogSell.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}]]</li>
+                                <li class="list-group-item"><sapn class="fw-bolder">희망가격</sapn>&nbsp;[[${dogSell.price}]]만원</li>
+                            </ul>
+                        </div>
+                    </div>
+                </th:block><!-- 해당날짜에 분양글이 존재할경우 th:if -->
+
+
+                <th:block th:if="${pResponseDtoList} != null">
+                <div class="mb-3" style="clear:left;">
+                    <br>
+                    <br>
+                    <nav  aria-label="Page navigation example">
+                        <div>
+                            <ul class="pagination">
+                                <li class="page-item pagination_button " th:if="${pResponseDto.prev}">
+                                    <a  class="page-link" aria-label="Previous" th:data-num="${pResponseDto.start-1}"><span aria-hidden="true">&laquo;</span></a>
+                                </li>
+
+                                <th:block th:each="i:${#numbers.sequence(pResponseDto.start, pResponseDto.end)}" th:if="${pResponseDto.page}">
+                                    <li class="page-item pagination_button " th:classappend="${pResponseDto.page == i } ? active : ''" >
+                                        <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+                                <li class="page-item pagination_button " th:if="${pResponseDto.next}">
+                                    <a  class="page-link" aria-label="Next" th:data-num="${pResponseDto.end+1}"><span aria-hidden="true">&raquo;</span></a>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </nav>
+                </div>
+                </th:block>
+                </form>
+            </div><!-- 컨테이너 -->
+        </article>
+
+
+        <!-- 특징내용 전체보여주기 모달창 -->
+        <div class="modal contentAllModalDiv" tabindex="-1"  >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title contentAllModalDivHeader"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <p class="contentAllModalDivBody">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-warning btn-sm contentAllModalDivBtn" >닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 특징내용 전체보여주기 모달창 -->
+
+
+
+<script th:inline="javascript">
+
+var gno = [[${gno}]];
+
+var localDate = [[${localDate}]]
+var dogsellcount = [[${count.dogsellcount}]]
+var guestcount = [[${count.guestcount}]]
+var guestreplycount = [[${count.guestreplycount}]]
+var postcount = [[${count.postcount}]]
+var postreplycount = [[${count.postreplycount}]]
+var inquirycount = [[${count.inquirycount}]]
+
+//-console.log("admin_dogsell_list.html 날짜확인 -> "+ localDate);
+
+$(document).ready(function(){
+
+    //검색+페이지이동
+    $("a.page-link").on("click", function(e){
+        //-console.log("admin_dogsell_list.html 검색+페이지이동 처리 클릭이벤트 진입");
+        e.preventDefault();
+        var page = $(this).data("num");
+        //-console.log("페이지번호 확인 -> "+ page)
+
+        $("form").append(`<input type='hidden' name='page' value="${page}">`);
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="dogsell">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+        var href = window.location.search;
+        const urlParams = new URLSearchParams("${href}");
+        var type = urlParams.get("type");
+        var keyword = urlParams.get("keyword");
+        //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 얻기 -> "+ href);
+        //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 keyword 얻기 -> "+ keyword);
+        //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 type 얻기 -> "+ type);
+
+        //$("form").attr("action",`/admin/dogsell/list${href}`).submit();
+        //$("form").attr("action",`/admin/dogsell/list?page=${page}&yearmonth=${localDate}&tabtitle=dogsell&type=${type}&keyword=${keyword}`).submit();
+        $("form").submit();
+    });//검색+페이지이동
+
+
+    $("#reset").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_guestbook_list.html 검색+페이지이동 reset버튼 클릭이벤트 진입");
+
+        //$("form").empty();
+        $("select[name=type]").val("");
+        $("input[name=keyword]").val("");
+
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="dogsell">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+        //var href = window.location.href;
+        var href = window.location.search;
+        //-console.log("admin_dogsell_list.html 검색 초기화 버튼클릭 진입 현재 쿼리스트링 얻기 -> "+ href);
+        //$("form").attr("action",`/admin/dogsell/list?yearmonth=${localDate}&tabtitle=dogsell`).submit();
+        $("form").submit();
+    });
+
+
+//검색버튼클릭시
+    $(".searchBtn").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입");
+        var selectvalue = $("select[name=type]").val();
+        //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+        var selectkeyword = $("input[name=keyword]").val();
+        //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+        if(selectvalue =="" || selectkeyword == ""){
+            //-console.log("admin_dogsell_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+            alert("검색조건을 선택하시고 검색어를 입력해주세요");
+            return;
+        }
+
+        if(selectvalue !="" && selectkeyword != ""){
+            //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+            //var localDate = $("input[name='localDate']").val();
+
+            var href = window.location.search;
+            const urlParams = new URLSearchParams("${href}");
+            var typequery = urlParams.get("type");
+            var keywordquery = urlParams.get("keyword");
+            //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 얻기 -> "+ href);
+            //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 keyword 얻기 -> "+ keywordquery);
+            //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 type 얻기 -> "+ typequery);
+
+            var keyword = $("input[name='keyword']").val();
+            //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입  keyword 얻기 -> "+ keyword);
+            //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입  type 얻기 -> "+ selectvalue);
+
+            //$("form").attr("action", `/admin/dogsell/list?yearmonth=${localDate}&tabtitle=dogsell&type=${type}&keyword=${keyword}`)
+            //.submit();
+
+            $("form").submit();
+        }
+    });
+
+     $(".searchBtn").on("keyup",function(key){
+        if(key.keyCode==13){
+            //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입");
+            var selectvalue = $("select[name=type]").val();
+            //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+            var selectkeyword = $("input[name=keyword]").val();
+            //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+            if(selectvalue =="" || selectkeyword == ""){
+                //-console.log("admin_dogsell_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+                alert("검색조건을 선택하시고 검색어를 입력해주세요");
+                return;
+            }
+
+            if(selectvalue !="" && selectkeyword != ""){
+                //-console.log("admin_dogsell_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+                //var localDate = $("input[name='localDate']").val();
+
+                var href = window.location.search;
+                const urlParams = new URLSearchParams("${href}");
+                var typequery = urlParams.get("type");
+                var keywordquery = urlParams.get("keyword");
+                //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 얻기 -> "+ href);
+                //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 keyword 얻기 -> "+ keywordquery);
+                //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 type 얻기 -> "+ typequery);
+
+                var keyword = $("input[name='keyword']").val();
+                //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입  keyword 얻기 -> "+ keyword);
+                //-console.log("admin_dogsell_list.html 페이지이동 버튼 클릭진입  type 얻기 -> "+ selectvalue);
+
+                //$("form").attr("action", `/admin/dogsell/list?yearmonth=${localDate}&tabtitle=dogsell&type=${type}&keyword=${keyword}`)
+                //.submit();
+
+                $("form").submit();
+            }
+        }
+     });
+
+
+//관리자페이지 분양글에서 특징글 전체 보이게 모달창으로 보이게할때
+$(".contentAll").on("click", function(){
+//contentAllModalDiv contentAllModalDivHeader contentAllModalDivBody contentAllModalDivBtn
+    //-console.log("관리자 목록페이지 admin_tab_dogsell.html 강아지분양글전체 중 특징내용 모달창으로 보여주기 클릭이벤트 진입");
+
+    var dnoVal =$(this).data("dno");
+    var contentVal =$(this).data("content");
+
+    $(".contentAllModalDivHeader").html(dnoVal+"번 분양강아지 특징");
+    $(".contentAllModalDivBody").html(contentVal)
+    $(".contentAllModalDiv").show();
+});//끝 on()클릭이벤트진입
+
+//특징모달창 닫기이벤트진입
+$(".contentAllModalDivBtn").on("click",function(){
+    //-console.log("관리자 목록페이지 admin_tab_dogsell.html 강아지분양글전체 중 특징내용 모달창 닫기 클릭이벤트 진입");
+    $(".contentAllModalDiv").hide();
+});//끝 on() 모달창닫기이벤트
+
+
+
+});
+</script>
+    </th:block>
+</th:block>
+
+</html>

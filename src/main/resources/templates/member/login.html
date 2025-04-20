@@ -1,0 +1,124 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="~{layout/article_about_login :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    로그인
+                </div>
+
+                <a class="btn btn-outline-success" th:href="|@{/post/list}?${pageRequestDto.getLink()}|">목록으로</a>
+                <a class="btn btn-outline-success" th:href="|@{/member/join}?${pageRequestDto.getLink()}|">회원가입</a>
+
+                <br>
+                <br>
+
+                <form method="post" action="/member/login" >
+                    <div class="col-12">
+                        <label class="form-label">이메일</label>
+                        <input type="text" class="form-control" name="username">
+                    </div>
+
+                    <br>
+                    <div class="col-12">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" class="form-control" name="password" autocomplete="off">
+                    </div>
+
+                    <br>
+                    <div class="col-12">
+                        <label class="form-label">자동로그인</label>
+                        <input type="checkbox" name="remember-me" id="remember-me">
+                    </div>
+
+
+                    <br>
+
+                    <button class="btn btn-outline-primary loginBtn" type="button">일반로그인</button>
+                    <br>
+                    <br>
+                    <div style="display:inline-block;text-align:right;">
+                        <a href="/oauth2/authorization/google"><img src="/image/google.png"
+                                                                    style="height:46px"></a>
+
+                        <a href="/oauth2/authorization/naver"><img src="/image/naver.png"
+                                                                   style="height:46px"></a>
+
+                        <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=fc9d360917b2b071e45d69e915598dbe&redirect_uri=http://merrydog2024.kro.kr/oauth/kakao">
+                            <img src="/image/kakao.png" style="height:46px"></a>
+
+<!-- aws이전계정시
+                     <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=fc9d360917b2b071e45d69e915598dbe&redirect_uri=http://ec2-3-39-29-255.ap-northeast-2.compute.amazonaws.com/oauth/kakao">
+                            <img src="/image/kakao.png" style="height:46px"></a>-->
+
+<!-- 엔진엑스 사용하지않을경우
+                        <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=fc9d360917b2b071e45d69e915598dbe&redirect_uri=http://ec2-3-39-29-255.ap-northeast-2.compute.amazonaws.com:8080/oauth/kakao">
+                            <img src="/image/kakao.png" style="height:46px"></a>
+-->
+<!--내로컬시
+                        <a href="https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=fc9d360917b2b071e45d69e915598dbe&redirect_uri=http://localhost:8080/oauth/kakao">
+                            <img src="/image/kakao.png" style="height:46px"></a>
+-->
+
+                    </div>
+
+                    <!--
+                   <input type="hidden" th:name="${_csrf.parameterName }" th:value="${_csrf.token }">-->
+                </form>
+
+            </div>
+        </article>
+
+</th:block>
+</th:block>
+<script th:inline="javascript">
+//-console.log("login.html파일 진입");
+
+
+var exception =[[${exception}]]
+var error =[[${error}]]
+
+//-console.log("login.html exception ->" +exception);
+//-console.log("login.html error ->" +error);
+
+if("true" == error ){
+    alert(exception);
+}
+
+$(document).ready(function(){
+
+    //로그인버튼 클릭시
+    $(".loginBtn").on("click", function(){
+        var username = $("input[name='username']").val();
+        var password = $("input[name='password']").val();
+
+        if(username=="" || password ==""){
+            alert("이메일과 비밀번호를 입력해주세요!");
+            $("input[name='username']").focus();
+            return;
+        };
+
+        const pattern = /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-za-z0-9\-]+/;
+
+        if(pattern.test(username) === false) {
+            alert("이메일 형식이 맞지 않습니다. 다시 확인해주세요!");
+            $("input[name='username']").focus();
+            return;
+        }
+
+        $("form").submit();
+    });//로그인버튼
+
+});
+
+</script>
+</html>

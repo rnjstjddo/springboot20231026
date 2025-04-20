@@ -1,0 +1,142 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    게시글 등록
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/post/list}?${pageRequestDto.getLink()}|">목록으로</a>
+
+
+                <form>
+
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title"  placeholder="제목을 작성해주세요" required/>
+                    </div>
+                    <br>
+                    <br>
+
+                    <th:block th:if="${loginMember ==null}">
+                    <div class="mb-3">
+                        작성자
+                        <input class="form-control" type="text"  name="author"  placeholder="작성자를 입력해주세요" required/>
+                    </div>
+                    </th:block>
+
+                    <th:block th:if="${loginMember !=null}">
+                        <div class="mb-3">
+                            작성자
+                            <input class="form-control" type="text"  name="author"  th:value="${loginMember}"readonly/>
+                        </div>
+                    </th:block>
+
+                    <br>
+                    <br>
+
+
+                    <div class="mb-3">
+                        내용
+                        <textarea class="form-control"   name="content" rows="5" placeholder="내용을 작성해주세요" required></textarea>
+                    </div>
+                    <br>
+                    <br>
+
+                  <!--  <div class="mb-3">
+                        첨부파일
+                        <input class="form-control file" type="file"  name="fList" placeholder="첨부파일을 선택해주세요"  multiple/>
+                    </div>
+                    <br>
+                    <div>-->
+                        <!-- <ul style="display:flex; flex-flow:row; overflow:auto;">
+
+                         </ul>-->
+                        <!-- <div class="row row-cols-1 row-cols-md-3 g-4 uploadResult">
+                        </div>
+
+                    </div>-->
+                    <br>
+                    <br>
+
+
+                    <div class="col-12" style="text-align: center;">
+                        <button type="button" style="display:inline-block;" class="btn btn-outline-primary" id="registerBtn">게시글 등록하기</button>
+                        <button type="reset"  style="display:inline-block;" class="btn btn-outline-secondary">초기화</button>
+
+                    </div>
+                </form>
+
+            </div>
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+$(document).ready(function(){
+  var registerForm=$("form");
+  var link = [[${pageRequestDto.getLink()}]];
+
+
+$("#registerBtn").on("click", function(e){
+    //-console.log("posts-save.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 ");
+    e.preventDefault();
+
+    var title = $("input[name='title']").val();
+    var content = $("textarea[name='content']").val();
+    var author = $("input[name='author']").val();
+
+    var data={
+        title:title, content:content, author:author
+    };
+    //-console.log(data);
+
+    if(title == '' || content == ''|| author ==''){
+        //-console.log("posts-save.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 - 작성칸 비웠을때 진입");
+        alert("게시글 작성란이 비었습니다. 채워주셔야 등록이 됩니다!");
+        return;
+    }
+
+
+    $.ajax({
+        url:'/api/v1/posts/',
+        method:'post',
+        dataType:'json',
+        contentType:'application/json;charset=utf-8',
+        data:JSON.stringify(data)
+    })
+    .done(function(result){
+        //-console.log("posts-save.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 -done() 진입");
+        alert(result+"번 게시글이 등록되었습니다.");
+        location.replace(`/post/list?`+link);
+    })
+    .fail(function(error){
+        //-console.log("posts-save.html 등록하기 버튼이벤트 진입 -ajax처리 api서버로 -then() 진입");
+        //-console.log(error);
+    });
+
+
+});//등록하기버튼 이벤트처리
+
+});//$(document)
+</script>
+
+</html>

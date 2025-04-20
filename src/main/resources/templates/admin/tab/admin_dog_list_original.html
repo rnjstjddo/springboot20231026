@@ -1,0 +1,273 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+        xmlns="http://www.w3.org/1999/html"
+>
+
+<th:block th:replace="~{layout/article_about_admin :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    관리자 페이지 - 분양글
+                </div>
+
+                <section class="py-5">
+                    <aside class="bg-primary bg-gradient rounded-3 p-4 p-sm-5 mt-5">
+                        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+                            <div class="mb-4 mb-xl-0">
+                                <div class="fs-3 fw-bold text-white">강아지품종검색</div>
+                            </div>
+
+                            <form action="/admin/dogsell/list/search" method="get">
+                                <div class="mb-4 mb-xl-0">
+                                    <div class="input-group col-auto">
+                                        <input class="form-control" name="searchBreed" type="text"
+                                               aria-describedby="button-newsletter" th:value="${searchBreed}"/>
+                                        <button class="btn btn-outline-light searchBtn" type="button">찾기</button>&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button class="btn btn-outline-light" id="resetSearch" type="button">초기화</button>
+                                        &nbsp;&nbsp;
+                                        <a class="btn btn-outline-light" type="button" href="/admin/dogsell/list">분양글전체목록</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </aside>
+
+                    <th:block th:if="${#lists.isEmpty(dogSellList)} and ${searchBreed} !=null">
+                        <br><br>
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        검색조건에 맞는 분양글이 없습니다.
+                    </th:block>
+
+                    <th:block th:if="${#lists.isEmpty(dogSellList)} and ${searchBreed} ==null">
+                        <br><br>
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        아직 등록된 분양글이 없습니다.
+                    </th:block>
+
+
+
+                    <th:block th:each="localDateTime:${localDateTimeList}">
+                    <div style="float:left;">
+                    <br>
+                    <th:block th:each="dogSell:${dogSellList}" th:if="${dogSellList} !=null and ${dogSell.getModifiedDate()==localDateTime}">
+                            <div class="container mt-3" style="height:800px">
+                                <p class="fw-bold fs-5">[[${#temporals.format(localDateTime, 'yyyy-MM-dd')}]] 분양글</p>
+                                <div class="card" style="width:18rem;">
+                                    <div style="text-align:center;">
+                                        <img style="height:150px;width:auto;"
+                                            th:src="|/dogselldisplay?fileName=${dogSell.dsiDtoList[0].getImageURL()}|"
+                                            class="card-img-top"/>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><span class="fw-bolder">분양결과</span>&nbsp;
+                                            <th:block th:switch="${dogSell.complete}">
+                                                <th:block th:case="true">분양완료</th:block>
+                                                <th:block th:case="false">분양중</th:block>
+                                            </th:block>
+                                            <!--[[${dogSell.complete}]]-->
+                                        </li>
+                                        <li class="list-group-item"><span class="fw-bolder">특징</span>&nbsp;
+                                            <span style="display:block; overflow:hidden; text-overflow:ellipsis; width:250px; height:100px;">
+                                                <button type="button" th:data-dno="${dogSell.dno}" th:data-content="${dogSell.content}" class="btn btn-outline-success btn-sm contentAll">전체보기</button> [[${dogSell.content}]]
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">분양번호</sapn>&nbsp;[[${dogSell.dno}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">작성자</sapn>&nbsp;[[${dogSell.membername}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">나이</sapn>&nbsp;[[${dogSell.age}]]세</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">무게</sapn>&nbsp;[[${dogSell.weight}]]kg</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">품종</sapn>&nbsp;[[${dogSell.type}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">암수</sapn>&nbsp;[[${dogSell.gender}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">건강상태</sapn>&nbsp;[[${dogSell.health}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">작성시간</sapn>&nbsp;[[${#temporals.format(dogSell.createdDate, 'yyyy-MM-dd HH:mm:ss')}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">수정시간</sapn>&nbsp;[[${#temporals.format(dogSell.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}]]</li>
+                                        <li class="list-group-item"><sapn class="fw-bolder">희망가격</sapn>&nbsp;[[${dogSell.price}]]만원</li>
+                                    </ul>
+                                </div>
+                               </div>
+                        </th:block>
+                    </div>
+                    </th:block>
+                </section>
+            </div><!-- 컨테이너 -->
+        </article>
+
+
+        <!-- 특징내용 전체보여주기 모달창 -->
+        <div class="modal contentAllModalDiv" tabindex="-1"  >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title contentAllModalDivHeader"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <p class="contentAllModalDivBody">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-warning btn-sm contentAllModalDivBtn" >닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 특징내용 전체보여주기 모달창 -->
+
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+
+var listForm = $("form");
+
+var loginMember =[[${loginMember}]];
+
+//-console.log("admin_dog_list 회원명 -> "+loginMember);
+
+function formatTime(str){
+   //-console.log("admin_dog_list.html formatTime() 함수 진입 - 강아지 품종검색 클릭이벤트 진입 후 ajax success() -> "+str);
+    var date = new Date(str);
+
+    return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+}
+
+
+//즉시실행함수
+(function(){
+
+var starBtnList =$(".starBtn");
+
+$.each(starBtnList, function(i, o){
+    var datadno = $(this).data("dno");
+    var complete = $(this).data("complete");
+
+    if(complete){
+        //-console.log("admin_dog_list.html 즉시실행함수 진입 - 분양완료한 게시물번호를 목록에서 찾을때 진입 해당 게시물 번호 -> "+ datadno);
+
+        $(this).closest(".col-lg-4").css("filter","opacity(50%)").css("position","relative").css("z-index","0");
+        $(this).closest(".col-lg-4").find(".card-footer").html(`<h3 class="text-muted fst-italic">분양완료</h3>`)
+    }//if문
+});
+})();
+
+
+
+
+$(".searchBtn").on("click", function(){
+    //-console.log("admin_dog_list.html 강아지 품종검색 클릭이벤트 진입 검색한 강아지품종 ->")
+
+    const searchBreed = $("input[name='searchBreed']").val();
+    //-console.log(searchBreed)
+    const regex = new RegExp("^[가-힣a-zA-Z]+$");
+    if(!regex.test(searchBreed)){
+        //-console.log("admin_dog_list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 오류발생")
+        alert("한글과 영문만 입력가능합니다.")
+        $("input[name='searchBreed']").val("").focus();
+    }else{
+        //-console.log("admin_dog_list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 확인후 submit() 처리")
+        $("form").submit();
+    }
+});
+
+
+//중복 위시리스트 담는상품의 경우
+$(".starfill").on("click", function(){
+    //-console.log("admin_dog_list.html .starfill 클릭이벤트 진입");
+    alert(loginMember+"회원님! 위시리스트에 이미 담은 상품입니다.\n상품삭제는 마이페이지 -> 위시리스트에서 가능합니다!");
+});
+
+//처음 위시리스트담는상품의경우
+$(".starBtn").on("click", function(){
+    //-console.log("admin_dog_list.html .starBtn 클릭이벤트 진입");
+
+    var name=$(this).data("name"); //로그인멤버
+
+    if(name ==null){
+        //-console.log("admin_dog_list.html .starBtn 클릭이벤트 진입 제일먼저 로그인한 회원인지확인 로그인하지 않으면 alert창 띄우기 ");
+        alert("로그인하신 회원만 찜설정이 가능합니다!")
+        return;
+    }
+
+    var dno=$(this).data("dno");
+    //-console.log(dno);
+    //th:data-dno="${dto.dno}" th:data-name="${loginMember}"
+    var aTag =$(this).closest("a");
+
+    var membername=$(this).data("membername");//분양글작성자
+
+    //-console.log("admin_dog_list.html .starBtn 클릭이벤트 진입 name -> "+name +", membername -> "+membername);
+
+    if(name ===membername){
+        alert("본인의 강아지는 찜할수가 없습니다.");
+        return;
+    }
+
+    $.ajax({
+        url:'/wishnum/insert',
+        type:"get",
+        data: {wishNum:dno},
+        contentType:"application/json;charset=utf-8",
+
+        success: function(result){
+            //-console.log("admin_dog_list.html .starBtn 클릭이벤트 진입 $.ajax success() 진입 - 결과 -> "+ result);
+
+            if(!result){
+                //-console.log("admin_dog_list.html .starBtn 클릭이벤트 진입 $.ajax success() 진입 - 이미 담은 상품의 경우");
+
+                alert(loginMember+"회원님! 이미 담은 상품입니다.");
+            }
+
+            //새롭게 담았을경우
+            if(result >= 1){
+                $(".wishnumSpan").html(result);
+                aTag.html(`<i class="bi bi-star-fill text-warning"></i>`);
+                alert("나의 관심목록에 담았습니다! 현재 "+result+"개의 찜한상품이 있습니다. \n마이페이지에서 확인할수있어요!");
+            }
+        }
+    });//$.ajax
+});
+
+$("#resetSearch").on("click", function(){
+    //-console.log("admin_dog_list.html 검색 reset버튼 클릭 진입");
+
+    $("form").empty();
+    $("form").submit();
+});
+
+
+var modifySuccess =[[${modifySuccess}]];
+if(modifySuccess !=null){
+    alert(modifySuccess+"번 강아지분양글이 수정되었습니다.");
+}
+
+var removeSuccess =[[${removeSuccess}]];
+if(removeSuccess !=null){
+    alert(removeSuccess+"번 강아지분양글이 삭제되었습니다.");
+}
+
+//관리자페이지 분양글에서 특징글 전체 보이게 모달창으로 보이게할때
+$(".contentAll").on("click", function(){
+//contentAllModalDiv contentAllModalDivHeader contentAllModalDivBody contentAllModalDivBtn
+    //-console.log("관리자페이지 admin_dog_list.html 강아지분양글전체 중 특징내용 모달창으로 보여주기 클릭이벤트 진입");
+
+    var dnoVal =$(this).data("dno");
+    var contentVal =$(this).data("content");
+
+    $(".contentAllModalDivHeader").html(dnoVal+"번 분양강아지 특징");
+    $(".contentAllModalDivBody").html(contentVal)
+    $(".contentAllModalDiv").show();
+});//끝 on()클릭이벤트진입
+
+//특징모달창 닫기이벤트진입
+$(".contentAllModalDivBtn").on("click",function(){
+    //-console.log("관리자페이지 admin_dog_list.html 강아지분양글전체 중 특징내용 모달창 닫기 클릭이벤트 진입");
+    $(".contentAllModalDiv").hide();
+});//끝 on() 모달창닫기이벤트
+
+</script>
+
+</html>

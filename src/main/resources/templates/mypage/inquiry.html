@@ -1,0 +1,177 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/pricing_mypage :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <section class="py-5">
+            <div class="container px-5 my-5">
+                <div class="text-center mb-5">
+                    <h3 class="fw-bolder">마이페이지 > [[${memberDTO.getName()}]]회원님이 작성한 문의글</h3>
+                    <p class="lead fw-normal text-muted mb-0"></p>
+                </div>
+                <div class="row gx-5">
+                    <div class="col-xl-8">
+                        <!-- FAQ Accordion 1-->
+                        <h2 class="fw-bolder mb-3"></h2>
+                        <div class="accordion mb-5" id="accordionExample">
+
+                            <th:block th:if="${#lists.isEmpty(iDTOList) and #lists.isEmpty(irDTOList)}" >
+                                <br>
+                                <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                                <b>아직 작성하신 문의글이 없습니다.^^</b>
+                            </th:block>
+
+
+<!-- 문의 답변글이 존재하지않을때-->
+
+                            <th:block th:if="${!#lists.isEmpty(iDTOList)}">
+                                <th:block th:each="iDto:${iDTOList}">
+                                <div class="card">
+                                    <div class="card-header">
+                                        문의&nbsp;&nbsp; |&nbsp;&nbsp; 작성일자 [[${#temporals.format(iDto.createdDate, 'yyyy-MM-dd')}]] | &nbsp;&nbsp;
+                                        <th:block th:if="${#strings.equals(iDto.complete,true)}">
+                                            답변여부: 완료
+                                        </th:block>
+                                        <th:block th:if="${#strings.equals(iDto.complete,false)}">
+                                            답변여부: 미완료
+                                        </th:block>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">문의내용</p>
+                                        <h5 class="card-title">[[${iDto.content}]]</h5>
+                                        <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                                </th:block>
+                            </th:block>
+<!-- 문의 답변글이 존재할때-->
+                            <th:block th:if="${!#lists.isEmpty(irDTOList)}" th:each="irDto:${irDTOList}">
+                                <div class="card">
+                                    <div class="card-header">
+                                        &nbsp;문의&nbsp;&nbsp; |&nbsp;&nbsp; 작성일자 [[${#temporals.format(irDto.inquiryDto.createdDate, 'yyyy-MM-dd')}]] | &nbsp;&nbsp;
+                                        <th:block th:if="${#strings.equals(irDto.inquiryDto.complete,true)}">
+                                            답변여부: 완료
+                                        </th:block>
+                                        <th:block th:if="${#strings.equals(irDto.inquiryDto.complete,false)}">
+                                            답변여부: 미완료
+                                        </th:block>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">문의내용</p>
+                                        <h5 class="card-title"> [[${irDto.inquiryDto.content}]]</h5>
+                                        <!--<a href="#" class="btn btn-primary"></a>-->
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header">
+                                        &nbsp;답변&nbsp;&nbsp; | &nbsp;&nbsp; 작성일자 [[${#temporals.format(irDto.createdDate, 'yyyy-MM-dd')}]] | &nbsp;&nbsp;
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">답변내용</p>
+                                        <h5 class="card-title">[[${irDto.content}]]</h5>
+                                        <!--<a href="#" class="btn btn-primary"></a>-->
+                                    </div>
+                                </div>
+                                <br>
+                                <br>
+                            </th:block>
+                        </div>
+                    </div><!--col -->
+                </div><!-- row -->
+            </div><!-- container -->
+        </section>
+
+
+        <!--답변보기 모달창열기 -->
+        <div class="modal inquiryReplyModalShowDiv" tabindex="-1"  >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title inquiryReplyModalShowDivHeader"></h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <p class="inquiryReplyModalShowDivBodyOriginal">
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3" >
+                            <input type="text" name="inquiryReplyModalShowDivBody">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-warning btn-sm inquiryReplyModalShowDivBtn">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- 답변보기 -->
+
+    </th:block>
+    </th:block><!-- content -->
+</th:block>
+
+
+<script th:inline="javascript">
+$(document).ready(function(){
+    //답변보기 모달창열기
+    $(".inquiryReplyShowModal").on("click", function(){
+    //inquiryReplyModalShowDiv inquiryReplyModalShowDivHeader inquiryReplyModalShowDivBody inquiryReplyModalShowDivBtn
+        //-console.log("inquiry.html 문의글 전체목록에서 답글보기 클릭이벤트 진입");
+        //innum content writer createdDate
+
+        var innumVal =$(this).data("innum");
+        var contentVal =$(this).data("content");
+        var writerVal =$(this).data("writer");
+        var createdDateVal =$(this).data("createdDate");
+
+        $.ajax({
+            url:'/admin/inquiry/innumVal',
+            method:'post',
+            contentType: "application/json;charset=utf-8",
+            dataType:'text',
+            success: function(result){
+                if(result !=null){
+                    //-console.log("inquiry.html 문의글 답글보기 성공 진입 -> ");
+                    //-console.log(result);
+
+                    $(".inquiryReplyModalShowDivHeader").html(innumVal+"번 문의글 | 문의일자 "+createdDateVal);
+                    $(".inquiryReplyModalShowDivBodyOriginal").html(contentVal);
+                    $(".inquiryReplyModalShowDivBody").html(result.content);
+                    $(".inquiryReplyModalDiv").show();
+
+                }else{
+                    //-console.log("inquiry.html 문의글 답글보기 실패 진입 ");
+                    alert("문의글에 대한 답변이 확인되지 않습니다.")
+                    location.replace(`/admin/tab/inquiry`)
+                }
+            },
+
+            fail : function(){
+                //-console.log("inquiry.html 문의글 답글보기 실패 진입")
+                alert("문의글에 대한 답변이 확인되지 않습니다.")
+                location.replace(`/admin/tab/inquiry`)
+            }
+        });//끝 $.ajax
+
+
+    });//답변보기 모달창열기
+
+    //답변보기 모달창 닫기이벤트진입
+    $(".inquiryReplyModalShowDivBtn").on("click",function(){
+        //-console.log("inquiry.html 문의글 답글보기 모달창 닫기 이벤트 진입");
+        $(".inquiryReplyModalShowDiv").hide();
+    });//끝 on() 답변보기 모달창닫기이벤트
+
+
+
+
+});
+</script>
+</html>

@@ -1,0 +1,717 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about_dog :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    강아지 분양정보 수정하기
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/dogsell/list}|">목록으로</a>
+
+
+                <form>
+                    <br>
+                    <div class="mb-3">
+                        분양등록번호
+                        <input class="form-control" type="text"  name="dno" id="dno"  th:value="${modifyDto.dno}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title" id="title"  placeholder="제목을 작성해주세요"
+                               th:value="${modifyDto.title}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        작성자
+                        <input class="form-control" type="text"  name="writer"  id="writer"
+                               th:value="${modifyDto.writer}" readonly/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        강아지나이(단위: 살, 소수첫째자리까지 입력받을께요)
+                        <input class="form-control" type="text"  name="age"  id="age"
+                               th:value="${modifyDto.age}" required/>
+                    </div>
+                    <br>  <div class="mb-3">
+                        강아지몸무게(단위: kg, 소수첫째자리까지 입력받을께요)
+                        <input class="form-control" type="text"  name="weight"  id="weight"
+                               th:value="${modifyDto.weight}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        품종
+                        <input class="form-control" type="text"  name="type"  id="type"
+                               th:value="${modifyDto.type}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        이름
+                        <input class="form-control" type="text"  name="name"  id="name"
+                               th:value="${modifyDto.name}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        암수
+                        <input class="form-control" type="text"  name="gender"  id="gender"
+                               th:value="${modifyDto.gender}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        건강상태
+                        <input class="form-control" type="text"  name="health"  id="health"
+                               th:value="${modifyDto.health}" required/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        <label class="form-label">내용</label>
+                        <textarea class="form-control"  name="content"  id="content" rows="3" required>[[${modifyDto.content}]]</textarea>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        작성일자
+                        <input class="form-control" type="text"  name="createdDate" th:value="${#temporals.format(modifyDto.createdDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        수정일자
+                        <input class="form-control" type="text"  name="modifiedDate" th:value="${#temporals.format(modifyDto.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        분양희망가격(단위: 만)
+                        <input class="form-control" type="text"  name="price"  id="price"
+                               th:value="${modifyDto.price}" required/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3 " >
+                        <th:block th:if="${modifyDto.dsiDtoList ==null}">
+
+                            <b>아직 선택하신 강아지 사진이 없습니다. 사진을 올려주셔서 분양원하시는 분들에게
+                            정보를 제공해주세요^^</b>
+                            <br><br>
+                        </th:block>
+                        <br>
+                        <input class="form-control file" type="file"  name="fList" placeholder="첨부파일을 선택해주세요"  multiple/>
+
+                        <div class="row row-cols-1 row-cols-md-3 g-4 uploadResult">
+                            <ul>
+                            </ul>
+                        </div>
+                        <div class="row row-cols-1 row-cols-md-3 g-4 uploadResultAfter">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+
+
+                    <div class="col-12" style="text-align: center;">
+                            <button style="display:inline-block;" class="btn btn-outline-primary" id="saveBtn">분양정보 저장하기</button>
+                            <button style="display:inline-block;" class="btn btn-outline-danger" id="removeBtn">분양정보 삭제하기</button>
+                            <button type="reset"  style="display:inline-block;" class="btn btn-outline-secondary">초기화</button>
+                    </div>
+                </form>
+
+            </div>
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+
+$(document).ready(function(){
+
+var dsiDtoList=[[${modifyDto.dsiDtoList}]];
+var imageTrue =[[${modifyDto.dsiDtoList != null}]];
+var imageFalse = [[${modifyDto.dsiDtoList == null}]];
+var modifyForm = $("form");
+
+var regex = new RegExp("(.*?)\.(exe|sh|zip|alz|tiff)$");
+var maxSize= 10485760;
+var imageDataArray =[];
+
+var imageDataArray=[]; //기존등록용 form으로 hidden전달
+var imageDataArrayAfter=[];//새로등록용 form으로 hidden전달
+var imageDataArrayDelete=[]; //기존삭제용 form으로 hidden전달
+var imageDataArrayDeleteAfter=[]; //새로삭제용 form으로 hidden전달
+
+
+
+//-console.log("read.html 진입 imageTrue -> "+imageTrue +", imageFalse -> "+imageFalse);
+if(imageFalse){
+    //-console.log("dogsell-modify.html 첨부파일 이미지가 존재하지 않을때 진입 -> "+ imageFalse);
+}
+
+
+if(imageTrue){
+    //-console.log("dogsell-modify.html 첨부파일 이미지가 존재할떄 진입 -> "+imageTrue);
+    var str="";
+
+    //ModifyDTO의 List 멤버변수의 변수 Long inum; String uuid,imgName,path; getImageURL() getThumbnailURL()
+    $.each(dsiDtoList, function(index, arr){
+    //-console.log("dogsell-modify.html 첨부파일 이미지가 존재할떄 진입 $.each 진입 ");
+
+        str+=`<li data-name="${arr.imgName}" data-path="${arr.path}" data-uuid="${arr.uuid}"
+                     style='list-style-type:none;float:left;'>
+                <br>
+                <a type="button" data-file=${arr.imageURL} style="color:#cc0000; text-decoration:none;">
+                <img src="/dogselldisplay?fileName=${arr.thumbnailURL}">
+                <br>X</a>
+                </li>`
+                //-console.log(arr);
+
+            var imgNameLi = arr.imgName;
+            var pathLi = arr.path;
+            var uuidLi = arr.uuid;
+            var imageURL=arr.imageURL;
+
+            //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.imgName -> "+ imgNameLi);
+            //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.path -> "+ pathLi);
+            //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.uuid -> "+ uuidLi);
+            //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.imageURL -> "+ imageURL);
+
+            imageDataArray.push({imgName:imgNameLi, path:pathLi, uuid:uuidLi, imageURL:imageURL});
+            //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 imageDataArray 배열 출력");
+    });//$.each
+    //-console.log("dogsell-modify.html 일반컨트롤러에서 타임리프로 데이터받을때 생성한 html출력 -> "+ str);
+    //-console.log(imageDataArray);
+    $(".uploadResult ul").append(str);
+}//imageTrue경우 이미지보여주기
+
+// --------------------------------------------------------------------------
+//기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행
+
+    $(".uploadResult li").on("click", function(){
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행");
+
+        //-console.log(imageDataArray);
+
+        var target = $(this);//li
+        var dataFile = target.find("a").data("file");
+
+        var fileNameData = target.data("name");
+        var uuidData = target.data("uuid");
+        var folderPathData = target.data("path");
+        var imageURL=dataFile
+
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -dataFile "+dataFile);
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -fileNameData "+fileNameData);
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -uuidData "+uuidData);
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -imageURL "+imageURL);
+
+        var num = imageDataArray.findIndex(obj => obj.uuid ==uuidData);
+        //-console.log("dogsell-modify.html 기존첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 삭제할index번호 -> "+ num);
+
+        //-console.log("삭제전");
+        //-console.log(imageDataArray);
+        imageDataArray.splice(num,1);
+        //-console.log("삭제후");
+        //-console.log(imageDataArray);
+
+        imageDataArrayDelete.push({imgName:fileNameData, path:folderPathData, uuid:uuidData, imageURL:imageURL});
+
+        //-console.log(imageDataArrayDelete);
+        target.remove();
+    });//화면 이미지 삭제버튼 클릭
+
+// --------------------------------------------------------------------------
+//새로 올라온 첨부파일이미지 삭제하기
+    $(".uploadResultAfter").on("click", "li", function(){
+
+        //-console.log("dogsell-modify.html 새로 추가한첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행");
+
+        var target = $(this);
+        var dataFile = target.find("a").data("file");
+
+        var fileNameData = target.data("name");
+        var uuidData = target.data("uuid");
+        var folderPathData = target.data("path");
+        var imageURL =dataFile;
+        //-console.log("dogsell-modify.html 새로 추가한 첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -dataFile "+dataFile);
+        //-console.log("dogsell-modify.html 새로 추가한 첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -fileNameData "+fileNameData);
+        //-console.log("dogsell-modify.html 새로 추가한 첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -uuidData "+uuidData);
+        //-console.log("dogsell-modify.html 새로 추가한 첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -imageURL "+imageURL);
+
+        var num = imageDataArrayAfter.findIndex(obj => obj.uuid ==uuidData);
+
+        //-console.log("삭제전");
+        //-console.log(imageDataArrayAfter);
+
+        imageDataArrayAfter.splice(num,1);
+
+        //-console.log("삭제후");
+        //-console.log(imageDataArrayAfter);
+
+        imageDataArrayDeleteAfter.push({imgName:fileNameData, path:folderPathData, uuid:uuidData, imageURL:imageURL});
+
+
+        target.remove();
+
+    });//화면 이미지 삭제버튼 클릭
+
+
+// --------------------------------------------------------------------------
+//input=file change() 이벤트진입
+
+function checkExtension(fileName, fileSize){
+    //-console.log("dogsell-modify.html 첨부파일 checkExtension() 정규표현식 검증함수 진입");
+
+    if(fileSize >= maxSize){
+        alert("파일사이즈를 초과했습니다.");
+        return false;
+    }
+
+    if(regex.test(fileName)){
+        alert("해당종류의 파일은 업로드 할수없습니다");
+        return false;
+    }
+    return true;// 위의 2개 조건이 아닌경우 true던진다.
+}
+
+
+// --------------------------------------------------------------------------
+//첨부파일이미지 change() 이벤트
+$("input[type='file']").change(function(){
+    //-console.log("dogsell-modify.html 첨부파일 change() 이벤트 진입");
+
+    var formData = new FormData();
+    var fileTag= $(this);
+
+    var multipartFiles= fileTag[0].files;
+
+    var appended= false;
+    $.each(multipartFiles, function(index, obj){
+        if(!checkExtension(obj.name, obj.size)){
+            //-console.log("dogsell-modify.html 첨부파일 change() 이벤트 진입 - 파일정규표현식 부적합할때");
+            return false;
+        }
+
+        formData.append("multipartFiles",obj);
+        appended = true;
+    });//each
+
+    if(!appended){
+        //-console.log("dogsell-modify.html 첨부파일 change() 이벤트 진입 - 파일정규표현식 부적합할때 $.each 함수 나와서 return 던진다.");
+        return;
+    }// each내부여서 밖으로 나와서 change()이벤트함수 내에서 처리
+
+    $.ajax({
+        url:'/dogselluploadAjax',
+        processData:false,
+        contentType: false,
+        data:formData,
+        type:'post',
+        dataType:'json',
+
+        success:function(result){
+            //-console.log("dogsell-modify.html 첨부파일 change() 이벤트 진입 - $.ajax success() 진입");
+            //-console.log(result);
+            showResult(result);//서버에서 받은 이미정보로 이미지 화면에 보여주기
+        },
+        error: function(jqXHR, testStatus, errorThrown){
+            //-console.log("dogsell-modify.html 첨부파일 change() 이벤트 진입 - $.ajax error() 진입");
+            //-console.log(testStatus);
+        }
+
+    });//$.ajax
+});//change() 함수
+
+// --------------------------------------------------------------------------
+function showResult(uploadResultArr){
+    //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() 서버에서 전달받은 첨부파일데이터로 화면에서 이미지 보여주기");
+
+    var uploadUlAfter= $(".uploadResultAfter ul");
+    //등록버튼 클릭시 이미지정보도 서버의 파라미터로 들어가야하기에 미리 저장한다. 삭제할때는 제거시킨다. 반드시
+
+
+    var str="";
+    $.each(uploadResultArr, function(index, obj){
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() 서버에서 전달받은 첨부파일데이터로 화면에서 이미지 보여주기 -$.each 진입");
+        //-console.log(obj); //fileName, uuid, folderPath;
+        str+=`<li data-name="${obj.fileName}" data-path="${obj.folderPath}" data-uuid="${obj.uuid}"
+                 style='list-style-type:none;float:left;'>
+            <br>
+            <a type="button" data-file=${obj.imageURL} style="color:#cc0000; text-decoration:none;">
+            <img src="/dogselldisplay?fileName=${obj.thumbnailURL}">
+            <br>X</a>
+            </li>`
+
+        var fileNameLi = obj.fileName;
+        var folderPathLi = obj.folderPath;
+        var uuidLi = obj.uuid;
+        var imageURL =obj.imageURL;
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() obj.imgName -> "+ fileNameLi);
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() obj.path -> "+ folderPathLi);
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() obj.uuid -> "+ uuidLi);
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() obj.imageURL -> "+ imageURL);
+
+
+        imageDataArrayAfter.push({imgName:fileNameLi,path:folderPathLi,uuid:uuidLi,imageURL:imageURL});
+        //-console.log("dogsell-modify.html showResult()함수진입 - $.ajax success() imageDataArrayAfter 배열 출력");
+        //-console.log(imageDataArrayAfter);
+
+    });//$.each
+
+    uploadUlAfter.append(str);
+    //-console.log(str);
+}//showResult()
+
+// --------------------------------------------------------------------------
+$("#age").keyup(function(){
+    //-console.log("dogsell-modify.html keyup() 이벤트진입 age경우 소수점 1자리 검증진입");
+
+    var age =$(this).val();
+    //-console.log("dogsell-modify.html keyup() 이벤트진입 age경우 소수점 1자리 검증 age값 -> "+age);
+    var verify = false;
+    if (/^[\d]*\.?[\d]{0,1}$/.test(age)) {
+       verify = true;
+       return;
+    }
+
+    if(!verify){
+        //-console.log("dogsell-modify.html keyup() 이벤트진입 age경우 소수점 1자리 검증 - 검증실패시");
+        alert("나이는 소수점 첫째자리까지만 입력해주세요");
+        return;
+    }
+});//나이
+
+// --------------------------------------------------------------------------
+$("#weight").keyup(function(){
+    //-console.log("dogsell-modify.html keyup() 이벤트진입 weight경우 소수점 1자리 검증진입");
+
+    var weight =$(this).val();
+
+    //-console.log("dogsell-modify.html keyup() 이벤트진입 weight경우 소수점 1자리 검증 -weight -> "+weight);
+
+    var verify = false;
+    if (/^[\d]*\.?[\d]{0,1}$/.test(weight)) {
+       verify = true;
+       return;
+    }
+
+    if(!verify){
+        //-console.log("dogsell-modify.html keyup() 이벤트진입 weight 소수점 1자리 검증 - 검증실패시");
+        alert("몸무게는 소수점 첫째자리까지만 입력해주세요");
+        return;
+    }
+});//몸무게
+
+
+// --------------------------------------------------------------------------
+ $("#gender").focusout(function(){
+    //-console.log("dogsell-modify.html focusout() 이벤트진입 gender경우 한글1문자 검증진입");
+
+    var gender =$(this).val();
+    //-console.log("dogsell-modify.html focusout() 이벤트진입 gender경우 한글1문자 검증진입 - gener값 -> "+gender);
+
+    var verify = false;
+    if (/^[ㄱ-힣]$/.test(gender)) {
+       verify = true;
+       return;
+    }
+
+    if(!verify){
+        //-console.log("dogsell-modify.html keyup() 이벤트진입 gender경우 한글1문자 검증 - 검증실패시");
+        alert("성별은 한글문자 1개로 입력해주세요");
+        return;
+    }
+});//성별
+
+
+//________________________________________
+//수정 저장하기
+$("#saveBtn").on("click", function(e){
+    //-console.log("dogsell-modify.html 수정페이지 저장하기 이벤트진입");
+    e.preventDefault();
+
+    if(confirm("수정한 강아지분양정보를 저장하시겠습니까?")){
+
+        var ageverify = false;
+        var weightverify = false;
+        var genderverify = false;
+        var blank_pattern = /\s/g;
+
+
+        var titleVal = $('#title').val();
+        var weightVal = $('#weight').val();
+        var genderVal = $('#gender').val();
+        var writerVal = $('#writer').val();
+        var typeVal = $('#type').val();
+        var ageVal = $('#age').val();
+        var nameVal = $('#name').val();
+        var healthVal = $('#health').val();
+        var priceVal = $('#price').val();
+        var contentVal = $('#content').val();
+
+        if (titleVal == '' || blank_pattern.test(titleVal) == true ) {
+          alert('게시물 제목을 입력하시고 공백을 제거해주세요!');
+            setTimeout(function(){
+                $("#title").focus();
+            });
+        }
+        if (weightVal == '' || blank_pattern.test(weightVal) == true ) {
+          alert('강아지무게를 입력하시고 (소수점 첫째자리까지) 공백을 제거해주세요! ');
+            setTimeout(function(){
+                $("#weight").focus();
+            });
+        }
+        if (genderVal == ''|| blank_pattern.test(genderVal) == true) {
+          alert('강아지 성별을 입력해주시고 (한글자로) 공백을 제거해주세요!');
+            setTimeout(function(){
+                $("#gender").focus();
+            });
+        }
+        if (typeVal == ''|| blank_pattern.test(typeVal) == true) {
+          alert('강아지 품종을 입력해주시고 공백을 제거해주세요!');
+            setTimeout(function(){
+                $("#type").focus();
+            });
+        }
+        if (ageVal == ''|| blank_pattern.test(ageVal) == true) {
+          alert('강아지 나이를 입력해주시고 (소수점 첫째자리까지) 공백을 제거해주세요');
+            setTimeout(function(){
+                $("#age").focus();
+            });
+        }
+        if (nameVal == '' || blank_pattern.test(nameVal) == true) {
+          alert('강아지 이름을 입력해주시고 공백을 제거해주세요!')
+            setTimeout(function(){
+                $("#name").focus();
+            });
+        }
+        if (healthVal == ''|| blank_pattern.test(healthVal) == true) {
+          alert('강아지 예방접종명을 입력해주시고 공백을 제거해주세요!');
+            setTimeout(function(){
+                $("#health").focus();
+            });
+        }
+        if (priceVal == '' || blank_pattern.test(priceVal) == true) {
+          alert('강아지 분양가격을 입력해주시고 (단위: 만원) 공백을 제거해주세요')
+            setTimeout(function(){
+                $("#price").focus();
+            });
+        }
+        if (contentVal == '') {
+          alert('강아지 특징을 입력해주세요!');
+            setTimeout(function(){
+                $("#content").focus();
+            });
+        }
+        if (/^[\d]*\.?[\d]{0,1}$/.test(ageVal)) {
+           ageverify = true;
+           //return true;
+        }
+
+        if(!ageverify){
+            //-console.log("dogsell-modify.html 등록버튼클릭시 age경우 소수점 1자리 검증 - 검증실패시");
+            alert("나이는 소수점 첫째자리까지만 입력해주세요");
+            setTimeout(function(){
+                $("#age").focus();
+            });
+        }
+
+        if (/^[\d]*\.?[\d]{0,1}$/.test(weightVal)) {
+           weightverify = true;
+           //return true;
+        }
+
+        if(!weightverify){
+            //-console.log("dogsell-modify.html 등록버튼클릭시 weight경우 소수점 1자리 검증 - 검증실패시");
+            alert("무게는 소수점 첫째자리까지만 입력해주세요");
+            setTimeout(function(){
+                $("#weight").focus();
+            });
+        }
+
+        if (/^[가-힣]$/.test(genderVal) || /^[가-힣]$/.test(genderVal)) {
+           genderverify = true;
+           //return true;
+        }
+
+        if(!genderverify){
+            //-console.log("dogsell-modify.html 등록버튼클릭시 gender경우 한글1문자 검증 - 검증실패시");
+            alert("성별은 한글문자 1개로 입력해주세요");
+            setTimeout(function(){
+                $("#gender").focus();
+            });
+        }
+    //자바스크립트 검증마친후 최종 보내기 form으로
+    if( genderverify && ageverify && weightverify){
+        //-console.log("dogsell-modify.html 수정 저장하기 버튼이벤트 진입 - 모든검증 true");
+
+        //이미지정보추출
+        //-console.log("dogsell-modify.html 수정 저장하기 버튼이벤트 진입 - imageDataArrayDelete 기존삭제객체 -> ");
+        //-console.log(imageDataArrayDelete);
+
+        //-console.log("dogsell-modify.html 수정 저장하기 버튼이벤트 진입 - imageDataArrayDeleteAfter 새로운삭제배열객체 -> ");
+        //-console.log(imageDataArrayDeleteAfter);
+
+        var dataFile=[];
+        //imageDataArray.push({imgName:imgNameLi,path:pathLi,uuid:uuidLi,imageURL:imageURL});
+
+        $.each(imageDataArrayDelete, function(index, arr){
+            var name = arr.imageURL;
+            dataFile.push({fileName:name});
+        });
+
+
+        $.each(imageDataArrayDeleteAfter, function(index, arr){
+            var name = arr.imageURL;
+            dataFile.push({fileName:name});
+        });
+         //-console.log("dogsell-modify.html 수정 저장하기 버튼이벤트 진입 -imageURL 배열객체 출력");
+
+        //-console.log(dataFile);
+
+        $.each(dataFile, function(index, arr){
+
+            $.ajax({
+                url: '/dogsellremoveFile',
+                data: {fileName:arr.fileName},
+                //data: JSON.stringify(dataFile),
+                type:'post',
+                success: function(result){
+                    //-console.log("dogsell-modify.html 수정 저장하기 모든첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -ajax success() 진입");
+                    //-console.log(result);
+
+                    //-console.log("dogsell-modify.html 수정 저장하기 모든첨부파일 이미지 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -ajax success() 진입 - 배열객체로 삭제되었는지 확인 undefined 나와야한다.");
+
+                    //console.log(imageDataArrayDelete);
+                    //console.log(imageDataArrayDeleteAfter);
+                }
+            });//ajax
+        });//$.each()
+
+
+        str="";
+
+        for(var i=0; i<imageDataArrayAfter.length; i++){
+         //-console.log("dogsell-modify.html 새로운 첨부파일 form hidden 추가진입 imageDataArrayAfter for문처리");
+            str+=`<input type="hidden" name="dsiDtoList[${i}].uuid" value="${imageDataArrayAfter[i].uuid}">`;
+            str+=`<input type="hidden" name="dsiDtoList[${i}].imgName" value="${imageDataArrayAfter[i].imgName}">`;
+            str+=`<input type="hidden" name="dsiDtoList[${i}].path" value="${imageDataArrayAfter[i].path}">`;
+        }
+
+
+        var newnum =imageDataArrayAfter.length;
+        var tonum = imageDataArrayAfter.length+imageDataArray.length;
+        //-console.log("dogsell-modify.html 새로운 첨부파일 form hidden 추가진입 newnum -> "+ newnum+",tonum -> "+tonum);
+
+         for(var i=newnum, ii=0; i<tonum, ii<imageDataArray.length; i++, ii++) {
+         //-console.log("dogsell-modify.html 새로운 첨부파일 form hidden 추가진입 imageDataArray for문처리");
+
+            str+=`<input type="hidden" name="dsiDtoList[${i}].uuid" value="${imageDataArray[ii].uuid}">`;
+            str+=`<input type="hidden" name="dsiDtoList[${i}].imgName" value="${imageDataArray[ii].imgName}">`;
+            str+=`<input type="hidden" name="dsiDtoList[${i}].path" value="${imageDataArray[ii].path}">`;
+        }
+
+            //-console.log(str);
+            modifyForm.append(str);
+            modifyForm.attr("action","/dogsell/modify");
+            modifyForm.attr("method","post");
+            modifyForm.submit();
+        }
+    }//if문
+
+
+});//수정하러가기버튼 이벤트처리
+
+//삭제하기버튼처리
+$("#removeBtn").on("click", function(e){
+    //-console.log("dogsell-modify.html 분양등록정보 삭제하기 삭제하기 버튼이벤트 진입 - form처리 ");
+    e.preventDefault();
+
+    if(confirm("해당 강아지분양정보를 삭제하시겠습니까? 삭제하실경우 모든 댓글내용이 삭제되니 유의하세요!")){
+
+        //이미지정보추출
+        //-console.log("dogsell-modify.html 분양등록정보 삭제하기 버튼이벤트 진입 - imageDataArrayDelete 기존등록삭제객체 -> ");
+        //-console.log(imageDataArrayDelete);
+        //-console.log("dogsell-modify.html 분양등록정보 삭제하기 버튼이벤트 진입 - imageDataArrayDeleteAfter 새로운삭제배열객체 -> ");
+        //-console.log(imageDataArrayDeleteAfter);
+        //-console.log("dogsell-modify.html 분양등록정보 삭제하기 버튼이벤트 진입 - imageDataArray 기존등록객체 -> ");
+        //-console.log(imageDataArray);
+        //-console.log("dogsell-modify.html 분양등록정보 삭제하기 버튼이벤트 진입 - imageDataArrayAfter 새로운등록객체 -> ");
+        //-console.log(imageDataArrayAfter);
+
+
+        var dataFile={imageDataArrayDeleteAfter,imageDataArrayDelete,imageDataArray, imageDataArrayAfter}
+
+
+
+        var removeImageURLAll = []
+        for ( var a of imageDataArray) {
+          removeImageURLAll.push(a.imageURL)
+        }
+         for ( var a of imageDataArrayAfter) {
+          removeImageURLAll.push(a.imageURL)
+        }
+        for ( var a of imageDataArrayDeleteAfter) {
+          removeImageURLAll.push(a.imageURL)
+        }
+        for ( var a of imageDataArrayDelete) {
+          removeImageURLAll.push(a.imageURL)
+        }
+
+        //-console.log(removeImageURLAll);
+
+        for(var a of removeImageURLAll){
+            $.ajax({
+                url: '/dogsellremoveFile',
+                data: {fileName:a},
+                dataType:'text',//받을 데이터유형
+                type:'post',
+                success: function(result){
+                    //-console.log("dogsell-modify.html 분양등록정보 삭제버튼 클릭이벤트 진입 이벤트위임방식진행 -ajax success() 진입");
+                    //-console.log(result+"번 분양정보가 삭제되었습니다.");
+                }
+            });//ajax
+        }//for문 서버폴더 먼저 삭제처리한다. 이후 post넘어가서 db삭제처리된다.
+
+        imageDataArrayDeleteAfter.length=0;
+        imageDataArrayDelete.length=0;
+        imageDataArray.length=0;
+        imageDataArrayAfter.length=0;
+        //-console.log(imageDataArray);
+        //-console.log(imageDataArrayAfter);
+        //-console.log(imageDataArrayDelete);
+        //-console.log(imageDataArrayDeleteAfter);
+
+
+        var dnoTag = $("#dno");
+
+        modifyForm.empty();
+
+        modifyForm.append(dnoTag);
+        modifyForm.attr("action","/dogsell/remove");
+        modifyForm.attr("method","post");
+        modifyForm.submit();
+
+    }//if문
+});//삭제하기버튼 이벤트처리
+
+
+});//$(document).ready()
+</script>
+
+</html>

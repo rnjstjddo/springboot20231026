@@ -1,0 +1,295 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="~{layout/article_about_admin_navs :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+
+            <div class="container">
+                <a type="button" class="btn btn-outline-success"
+                   th:href="@{/admin/home/home?yearmonth={localDate}(localDate=${localDate})}">
+                    달력으로이동
+                </a>
+                <a type="button" class="btn btn-outline-primary">
+                    검색일자 [[${localDate}]]
+                </a>
+                <br><br>
+
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='dogsell' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/dogsell/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=dogsell|">
+                            분양글
+                            <span class="badge text-bg-warning">[[${count.dogsellcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbook' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/guestbook/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbook|">
+                            방명록
+                            <span class="badge text-bg-warning">[[${count.guestcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='guestbookreply' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/guestbookreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=guestbookreply|">
+                            방명록댓글
+                            <span class="badge text-bg-warning">[[${count.guestreplycount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='posts' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/post/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=posts|">
+                            게시글
+                            <span class="badge text-bg-warning">[[${count.postcount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='postreply' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/postreply/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=postreply|">
+                            게시글댓글
+                            <span class="badge text-bg-warning">[[${count.postreplycount}]]</span>
+
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='inquiry' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/inquiry/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=inquiry|">
+                            문의글
+                            <span class="badge text-bg-warning">[[${count.inquirycount}]]</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fs-5 " th:classappend="${tabtitle} =='member' ? active : ''"
+                           aria-current="page" th:href="|@{/admin/member/list?yearmonth={localDate}(localDate=${localDate})}&tabtitle=member|">
+                            회원정보
+                            <span class="badge text-bg-warning">[[${count.membercount}]]</span>
+                        </a>
+                    </li>
+                </ul>
+                <br><br>
+                <div>
+                    <a class="btn btn-outline-secondary" type="button" href="/admin/tab/member">회원 전체목록페이지로 이동</a>
+                </div>
+
+
+                    <form th:action="@{/admin/member/list}" method="get">
+                        <input type="hidden" name="yearmonth" th:value="${localDate}">
+                        <input type="hidden" name="tabtitle" th:value="member">
+                        <input type="hidden" name="dogsellcount" th:value="${count.dogsellcount}">
+                        <input type="hidden" name="guestcount" th:value="${count.guestcount}">
+                        <input type="hidden" name="guestreplycount" th:value="${count.guestreplycount}">
+                        <input type="hidden" name="postcount" th:value="${count.postcount}">
+                        <input type="hidden" name="postreplycount" th:value="${count.postreplycount}">
+                        <input type="hidden" name="inquirycount" th:value="${count.inquirycount}">
+
+
+
+                        <div class="row mt-3">
+                        <div class="col">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <select class="form-select" name="type">
+                                        <option th:selected ="${pageRequestDTO.type == null}" value="" >---</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'n'}" value="n">회원명</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'e'}" value="e">회원이메일</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'b'}" value="b">소셜로그인여부(false/true)</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'r'}" value="r">회원권한</option>
+                                    </select>
+                                </div>
+
+                                <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"
+                                       th:placeholder="|${localDate} 일자 내에서 검색이 가능합니다.|">
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-search searchBtn" type="submit">검색</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-clear" id="reset">초기화</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- 검색처리 -->
+
+
+                    <br>
+                    <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} ==null and
+                        ${pageRequestDTO.keyword} ==null">
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        [[${localDate}]] 일자에 가입한 회원이 없습니다.
+                    </th:block>
+
+
+                    <th:block th:if="${pResponseDtoList} ==null and ${pageRequestDTO.type} !=null and
+                        ${pageRequestDTO.keyword} !=null">
+                        <div style="text-align:center;">
+                            <b>검색 결과가 없습니다. </b> &nbsp;&nbsp;
+                        </div>
+                    </th:block>
+                    <br>
+
+                    <th:block th:if="${!#lists.isEmpty(pResponseDtoList)}">
+
+                        <table class="table table-hover">
+                            <tr>
+                                <th scope="col" width="200px">이메일</th>
+                                <th scope="col" width="200px">이름</th>
+                                <th scope="col" width="100px">소셜로그인여부</th>
+                                <th scope="col" width="100px">권한</th>
+                            </tr>
+
+
+                            <tr th:each="dto:${pResponseDtoList}">
+                                <td id="id">[[${dto.email}]]</td>
+                                <td>[[${dto.name}]]</td>
+                                <td>[[${dto.fromSocial}]]</td>
+                                <td>[[${dto.role}]]</td>
+                            </tr>
+
+                        </table>
+
+                        <nav  aria-label="Page navigation example">
+                            <div>
+                                <ul class="pagination">
+                                    <li class="page-item pagination_button" th:if="${pResponseDto.prev}">
+                                        <a  class="page-link" aria-label="Previous" th:data-num="${pResponseDto.start-1}"><span aria-hidden="true">&laquo;</span></a>
+                                    </li>
+
+                                    <th:block th:each="i:${#numbers.sequence(pResponseDto.start, pResponseDto.end)}" th:if="${pResponseDto.page}">
+                                        <li class="page-item pagination_button" th:classappend="${pResponseDto.page == i } ? active : ''" >
+                                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                        </li>
+                                    </th:block>
+
+                                    <li class="page-item pagination_button" th:if="${pResponseDto.next}">
+                                        <a  class="page-link" aria-label="Next" th:data-num="${pResponseDto.end+1}"><span aria-hidden="true">&raquo;</span></a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </nav>
+                    </th:block>
+                </form>
+            </div>
+        </article>
+
+    </th:block>
+<script th:inline="javascript">
+
+
+var localDate = [[${localDate}]]
+var dogsellcount = [[${count.dogsellcount}]]
+var guestcount = [[${count.guestcount}]]
+var guestreplycount = [[${count.guestreplycount}]]
+var postcount = [[${count.postcount}]]
+var postreplycount = [[${count.postreplycount}]]
+var inquirycount = [[${count.inquirycount}]]
+
+$(document).ready(function(){
+
+    //검색+페이지이동
+    $("a.page-link").on("click", function(e){
+        //-console.log("admin_member_list.html 검색+페이지이동 처리 클릭이벤트 진입");
+        e.preventDefault();
+        var page = $(this).data("num");
+
+        $("form").append(`<input type='hidden' name='page' value="${page}">`);
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="member">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+
+        var href = window.location.search;
+        const urlParams = new URLSearchParams("${href}");
+        var type = urlParams.get("type");
+        var keyword = urlParams.get("keyword");
+        //-console.log("admin_member_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 얻기 -> "+ href);
+        //-console.log("admin_member_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 keyword 얻기 -> "+ keyword);
+        //-console.log("admin_member_list.html 페이지이동 버튼 클릭진입 현재 쿼리스트링 type 얻기 -> "+ type);
+
+        //$("form").attr("action",`/admin/member/list${href}`).submit();
+        //$("form").attr("action",`/admin/member/list?page=${page}&yearmonth=${localDate}&tabtitle=member&type=${type}&keyword=${keyword}`).submit();
+        $("form").submit();
+    });//검색+페이지이동
+
+
+    $("#reset").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_member_list.html 검색+페이지이동 reset버튼 클릭이벤트 진입");
+
+        //$("form").empty();
+        $("select[name=type]").val("");
+        $("input[name=keyword]").val("");
+
+        //$("form").append(`<input type="hidden" name="yearmonth" value="${localDate}">`);
+        //$("form").append(`<input type="hidden" name="tabtitle" value="member">`);
+        //$("form").append(`<input type="hidden" name="dogsellcount" value="${dogsellcount}">`);
+        //$("form").append(`<input type="hidden" name="guestcount" value="${guestcount}">`);
+        //$("form").append(`<input type="hidden" name="guestreplycount" value="${guestreplycount}">`);
+        //$("form").append(`<input type="hidden" name="postcount" value="${postcount}">`);
+        //$("form").append(`<input type="hidden" name="postreplycount" value="${postreplycount}">`);
+        //$("form").append(`<input type="hidden" name="inquirycount" value="${inquirycount}">`);
+
+        var href = window.location.search;
+        //-console.log("admin_member_list.html 검색 초기화 버튼클릭 진입 현재 쿼리스트링 얻기 -> "+ href);
+        //$("form").attr("action",`/admin/member/list?yearmonth=${localDate}&tabtitle=member`).submit();
+        $("form").submit();
+    });
+
+//검색버튼클릭시
+    $(".searchBtn").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입");
+        var selectvalue = $("select[name=type]").val();
+        //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+        var selectkeyword = $("input[name=keyword]").val();
+        //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+        if(selectvalue =="" || selectkeyword == ""){
+            //-console.log("admin_member_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+            alert("검색조건을 선택하시고 검색어를 입력해주세요");
+            return;
+        }
+
+        if(selectvalue !="" && selectkeyword != ""){
+            //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+            //$("form").attr("action", `/admin/member/list?yearmonth=${localDate}&tabtitle=member`).submit();
+            $("form").submit();
+        }
+    });
+
+     $(".searchBtn").on("keyup",function(key){
+        if(key.keyCode==13){
+            //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입");
+            var selectvalue = $("select[name=type]").val();
+            //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+            var selectkeyword = $("input[name=keyword]").val();
+            //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+            if(selectvalue =="" || selectkeyword == ""){
+                //-console.log("admin_member_list.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+                alert("검색조건을 선택하시고 검색어를 입력해주세요");
+                return;
+            }
+
+            if(selectvalue !="" && selectkeyword != ""){
+                //-console.log("admin_member_list.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+                //$("form").attr("action", `/admin/member/list?yearmonth=${localDate}&tabtitle=member`).submit();
+                $("form").submit();
+            }
+        }
+     });
+
+
+});
+</script>
+</th:block>
+
+</html>

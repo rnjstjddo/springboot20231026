@@ -1,0 +1,209 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html"
+>
+
+
+<th:block th:replace="~{layout/index_home :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+    <!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-5">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-lg-8 col-xl-7 col-xxl-6">
+                <div class="my-5 text-center text-xl-start">
+                    <h1 class="display-5 fw-bolder text-white mb-2">Welcome to Merry Dog</h1>
+                    <!--
+                    <p class="lead fw-normal text-white-50 mb-4">Merry Dog</p>
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Merry Dog</a>
+                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Merry Dog</a>
+                    </div>
+                    -->
+                </div>
+            </div><!--class="img-fluid rounded-3 my-5"-->
+            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img src="/image/three.jpg"  class="img-fluid rounded-3 my-5" alt="..." /></div>
+        </div>
+    </div>
+</header>
+
+    <!-- Call to action-->
+    <form action="/dogsell/list/search" method="get">
+    <aside class="bg-primary bg-gradient rounded-3 p-4 p-sm-5 mt-5">
+        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+            <div class="mb-4 mb-xl-0">
+                <div class="fs-3 fw-bold text-white">분양하고 싶은 강아지품종을 검색해보세요!</div>
+            </div>
+            <div>
+                <th:block th:if="${loginMember} ==null">
+                <div>
+                    <a class="btn btn-outline-light btn-lg px-4" href="/member/join">회원가입</a>
+                    <a class="btn btn-outline-light btn-lg px-4" href="/member/login">로그인</a>
+                    <br><br>
+                    <div class="small text-white-50">회원가입으로 분양하고 싶은 강아지를 찾아보세요!</div>
+                </div>
+                </th:block>
+                <th:block th:if="${loginMember} !=null">
+                    <div>
+                        <div class="small text-white-50">
+                            [[${loginMember}]]님이 찾으시는 강아지를 검색해보세요!
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+            <div class="mb-4 mb-xl-0">
+                <div class="input-group mb-2">
+                        <input class="form-control" type="text" name="searchBreed" aria-describedby="button-newsletter" />
+                        <a class="btn btn-outline-light searchBtn" id="button-newsletter" type="button">찾기</a>
+                </div>
+            </div>
+        </div>
+    </aside><!--bg-dark bg-gradient  -->
+    </form>
+    <section class="py-1 mt-5">
+       <h5 style="display:inline-block;" class="fw-bolder align-items-center justify-content-center">
+           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;최근 올라온 분양강아지
+           <a class="text-decoration-none" href="/dogsell/list">
+               <span class="fw-bolder">&nbsp;&nbsp;more
+                   <i class="bi bi-arrow-right"></i>
+               </span>
+           </a>
+       </h5>
+
+    </section>
+
+    <!-- Team members section-->
+    <section class="py-5 bg-light">
+        <th:block th:if="${#lists.isEmpty(dsListDto)}" th:each="ds:${dsListDto}">
+        <div class="row gx-5 row-cols-1 row-cols-sm-2 row-cols-xl-4 justify-content-center" style="position:relative;">
+            <div class="col mb-5 mb-5 mb-xl-0">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4"
+                         style="height:300px;width:auto; max-width:300px;overflow: hidden;"
+                         th:src="@{ds.dsiDtoList[0]}">
+                    <h5 class="fw-bolder">[[${ds.type}]]</h5>
+                    <div class="fst-italic text-muted">[[${ds.age}]] 살 | [[${ds.weight}]] kg</div>
+                </div>
+            </div>
+        </div>
+        </th:block>
+        <div class="row gx-5 row-cols-1 row-cols-sm-2 row-cols-xl-4 justify-content-center" style="position:relative;">
+            <th:block th:if="${!#lists.isEmpty(dsListDto)} and ${dsDtoStat.count} <4"
+                      th:each="dsDto:${dsListDto}" >
+            <div class="col mb-5 mb-5 mb-xl-0">
+                <div class="text-center">
+                    <img class="img-fluid rounded-circle mb-4 px-4"
+                         style="height:300px;width:auto; max-width:300px;overflow: hidden;"
+                         th:src="|/dogselldisplay?fileName=${dsDto.dsiDtoList[0].getImageURL()}|" alt="" />
+                    <h5 class="fw-bolder">[[${dsDto.type}]] | [[${dsDto.age}]]살</h5>
+                    <div class="fst-italic text-muted">[[${#temporals.format(dsDto.createdDate,'yyyy-MM-dd')}]]</div>
+                </div>
+            </div>
+            </th:block>
+        </div>
+    </section>
+        <section class="py-5">
+            <div class="container px-5">
+                <div class="row gx-4">
+                    <div class="col-xl-6">
+                        <h2 class="fw-bolder fs-5 mb-4">방명록</h2>
+                        <!-- News item-->
+                        <th:block th:each="gDtoList, gDtoListStat :${pResponseDto}"
+                                  th:if="${gDtoListStat.count} < 4">
+                            <div class="mb-4" >
+                                <div class="small text-muted" style="display :inline-block;">[[${gDtoList.title}]]
+                                </div>
+                                <div class="text-muted fst-italic mb-2" style="display :inline-block;">
+                                    [[${#temporals.format(gDtoList.createdDate,'yyyy-MM-dd')}]]
+                                </div>
+                                <a class="link-dark" th:href="|@{/guestbook/read(gno=${gDtoList.gno}, page=${pResponseDtoPage},
+                                        type=${pageRequestDTO.type}, keyword=${pageRequestDTO.keyword})}|">
+                                    <h5>[[${gDtoList.content}]]</h5></a>
+                            </div>
+                        </th:block>
+                        <div class="text-end mb-5 mb-xl-0">
+                            <a class="text-decoration-none" href="@{/guestbook/list}">
+                                More guestbooks
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <h2 class="fw-bolder fs-5 mb-4">게시판</h2>
+                        <!-- News item-->
+                        <th:block th:each="pDtoList:${responseDto}" th:if="${pDtoListStat.count} <4">
+
+                            <div class="mb-4">
+                                <div class="small text-muted" style="display :inline-block;">
+                                    [[${pDtoList.title}]]
+                                </div>
+                                <div class="text-muted fst-italic mb-2" style="display :inline-block;">
+                                    [[${#temporals.format(pDtoList.createdDate,'yyyy-MM-dd')}]]
+                                </div>
+                                <a class="link-dark" th:href="|@{/post/update(id=${pDtoList.id})}&${pageRequestDto.getLink()}|">
+                                    <h5>[[${pDtoList.content}]]</h5>
+                                </a>
+                            </div>
+                        </th:block>
+                        <div class="text-end mb-5 mb-xl-0">
+                            <a class="text-decoration-none"
+                               th:href="@{/post/list}">
+                                More posts
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- Testimonial section-->
+<div class="py-5 bg-light">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-7">
+                <div class="text-center">
+                    <div class="fs-4 mb-4 fst-italic">
+                        And day spent with you is my favorite day. <br> So, today is my new favorite day. <br>
+                        너와 함께한 하루는 언제나 특별한 날이야 <br> 그러니까 오늘은 나의 새로운 특별한 날이지
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <div class="fw-bold">
+                            -Winnie the Pooh
+                            <span class="fw-bold text-primary mx-1">/</span>
+                            -곰돌이 푸 중에서
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+
+$(document).ready(function(){
+
+$(".searchBtn").on("click", function(){
+    //-console.log("list.html 강아지 품종검색 클릭이벤트 진입 검색한 강아지품종 ->")
+
+    const searchBreed = $("input[name='searchBreed']").val();
+    //-console.log(searchBreed)
+    const regex = new RegExp("^[가-힣a-zA-Z]+$");
+    if(!regex.test(searchBreed)){
+        //-console.log("list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 오류발생")
+        alert("한글과 영문만 입력가능합니다.")
+        $("input[name='searchBreed']").val("").focus();
+    }else{
+        //-console.log("list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 확인후 submit() 처리")
+        $("form").submit();
+    }
+});
+
+
+});
+</script>

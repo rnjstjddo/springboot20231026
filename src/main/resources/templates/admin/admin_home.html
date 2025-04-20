@@ -1,0 +1,588 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html"
+>
+
+<th:block th:replace="~{layout/article_about_admin :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <section class="py-5 bg-light">
+            <div class='calrap' style=" margin: 0 auto;">
+                <div class="calheader">
+                    <div class="calbtn calprevDay"></div>
+                    <h2 class='caldateTitle'></h2>
+                    <div class="calbtn calnextDay"></div>
+                </div>
+
+                <div class="calgrid caldateHead">
+                    <div>일</div>
+                    <div>월</div>
+                    <div>화</div>
+                    <div>수</div>
+                    <div>목</div>
+                    <div>금</div>
+                    <div>토</div>
+                </div>
+
+                <div class="calgrid caldateBoard"></div>
+            </div>
+        </section>
+        <br><br>
+
+        <!-- Header-->
+       <!--
+       <header class="bg-dark py-5">
+            <div class="container px-5">
+                <div class="row gx-5 align-items-center justify-content-center">
+                    <div class="col-lg-8 col-xl-7 col-xxl-6">
+                        <div class="my-5 text-center text-xl-start">
+                            <h1 class="display-5 fw-bolder text-white mb-2">Merry Dog</h1>
+                            <p class="lead fw-normal text-white-50 mb-4">Merry Dog</p>
+                            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Merry Dog</a>
+                                <a class="btn btn-outline-light btn-lg px-4" href="#!">Merry Dog</a>
+                            </div>
+                        </div>
+                    </div>&lt;!&ndash;class="img-fluid rounded-3 my-5"&ndash;&gt;
+                    <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img th:src="@{/image/three.jpg}"  class="img-fluid rounded-3 my-5" alt="..." /></div>
+                </div>
+            </div>
+        </header>
+        -->
+
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+
+//방명록개수
+var guestbookDateCount =[[${guestbookDateCount}]]
+//방명록댓글개수
+var guestbookReplyDateCount =[[${guestbookReplyDateCount}]]
+//게시판개수
+var postsDateCount =[[${postsDateCount}]]
+//게시판댓글개수
+var postReplyDateCount =[[${postReplyDateCount}]]
+//문의글개수
+var inquiryDateCount =[[${inquiryDateCount}]]
+//회원수
+var memberDateCount = [[${memberDateCount}]]
+//분양글수
+var dogsellDateCount = [[${dogsellDateCount}]]
+
+
+let date = new Date();
+
+let dateyearmonth =[[${yearmonth}]]
+
+if(dateyearmonth !=null){
+    //-console.log("admin_home.html 서버에서 전달온 날짜값이 존재할때 진입") //272줄
+    //-console.log(dateyearmonth)//2024-04-01
+    dateyearmonth = new Date(dateyearmonth);//Mon Apr 01 2024 09:00:00 GMT+0900 (한국 표준시)
+    date= dateyearmonth;
+
+    //console.log(date);
+}
+
+
+function changeBeforeMonth(){
+    //-console.log("changeBeforeMonth() 들어옴")
+    let beforechangeDate = new Date(date.setMonth(date.getMonth() - 1))
+    let beforecurrentYear = new Date(beforechangeDate).getFullYear();
+    let beforechangeMonth = new Date(beforechangeDate).getMonth() + 1;
+    beforechangeMonth = beforechangeMonth < 10 ? '0'+beforechangeMonth : beforechangeMonth;
+    let resultbeforeMonth =beforecurrentYear+'-'+beforechangeMonth+'-'+'01'
+
+    //console.log("결과")
+    //console.log(resultbeforeMonth);
+    return resultbeforeMonth;
+}
+
+function changeAfterMonth(){
+    //-console.log("changeAfterMonth() 들어옴")
+
+    let afterchangeDate = new Date(date.setMonth(date.getMonth() + 1))
+    let aftercurrentYear = new Date(afterchangeDate).getFullYear();
+    let afterchangeMonth = new Date(afterchangeDate).getMonth() + 1;
+    afterchangeMonth = afterchangeMonth < 10 ? '0'+afterchangeMonth : afterchangeMonth;
+    let resultafterMonth =aftercurrentYear+'-'+afterchangeMonth+'-'+'01'
+
+    //console.log("결과")
+    //console.log(resultafterMonth);
+    return resultafterMonth;
+}
+
+
+$(document).ready(function(){
+
+    const makeCalendar = (date) => {
+         const currentYear = new Date(date).getFullYear();
+         const currentMonth = new Date(date).getMonth() + 1;
+         const firstDay = new Date(date.setDate(1)).getDay();
+
+         //console.log(date)//예)Mon Apr 01 2024 10:27:04 GMT+0900 (한국 표준시)
+         //console.log(currentYear)//317줄 2024
+         //console.log(currentMonth)//5
+         //console.log(firstDay)//1 앞에0안붙는다.
+
+         //현재 달력첫째날
+         let calfirst ='';
+
+         function getCalfirst(){
+            calfirst += `${currentYear}-`
+
+            if(currentMonth <10){
+                calfirst += `0${currentMonth}`
+            }else{
+                calfirst += `${currentMonth}`
+            }
+            //calfirst += `01`
+            return calfirst;
+         }//calfirst 현재달력첫날
+
+         //console.log("firstDay값 ->"+firstDay)//1
+         const lastDay = new Date(currentYear, currentMonth, 0).getDate();
+         //console.log("lastDay값 ->"+lastDay)//30
+         const limitDay = firstDay + lastDay;
+         //console.log("limitDay값 ->"+limitDay)//31
+         const nextDay = Math.ceil(limitDay / 7) * 7;
+         //console.log("nextDay값 ->"+nextDay)//35 35-31=4칸 빈칸만들어진다.
+
+         let htmlDummy = '';
+
+//방명록------------------------------------------------
+         var guestCountMap = new Map();
+         var guestDateArray = [];
+         var guestDateMap = new Map();
+
+         //현재 달력에 해당하는 방명록 데이터가 존재할때
+         let guestBool = false;
+         let guestReplyBool =false;
+
+         $.map(guestbookDateCount, function(k, v){
+             //-console.log("방명록 $.map진입 "+k+", "+v)
+             let sliceDate =v.substr(0,7)
+             //console.log("서버에서 넘어온 데이터의 월-> "+ sliceDate)
+             //console.log("현재달력의 월-> "+calfirst)
+
+             if(calfirst == sliceDate){
+                 //-console.log(calfirst == v)//true
+                 guestBool = true;
+             }
+
+             let resultDate = new Date(v).getDate();
+             //console.log("admin_home.html 방명록 날짜중 일 -> "+ resultDate)
+             guestCountMap.set(resultDate, k);
+             guestDateArray.push(resultDate);
+             guestDateMap.set(resultDate,v);
+         });//$.map
+
+         //-console.log("관리자페이지 달력 방명록 ->"+guestCountMap);
+         //-console.log("관리자페이지 달력 방명록 ->"+guestDateArray);
+         //-console.log("관리자페이지 달력 방명록 ->"+guestDateMap);
+
+//방명록댓글----------------------
+         var guestReplyCountMap = new Map();
+         var guestReplyDateArray = [];
+         var guestReplyDateMap = new Map();
+
+         $.map(guestbookReplyDateCount, function(k, v){
+             //-console.log("방명록댓글 $.map진입 "+k+", "+v)
+             let sliceDate =v.substr(0,7)
+
+             if(calfirst == sliceDate){ //달력첫날과 일치할경우
+                 //-console.log(calfirst == v)//true
+                 guestReplyBool = true;
+             }
+
+             let replyResultDate = new Date(v).getDate();
+             //console.log("admin_home.html 방명록댓글 날짜중 일 -> "+ replyResultDate)
+             guestReplyCountMap.set(replyResultDate, k);
+             guestReplyDateArray.push(replyResultDate);
+             guestReplyDateMap.set(replyResultDate,v);
+         });//$.map
+         //-console.log("관리자페이지 달력 방명록댓글 ->"+guestReplyCountMap);
+         //-console.log("관리자페이지 달력 방명록댓글 ->"+guestReplyDateArray);
+         //-console.log("관리자페이지 달력 방명록댓글 ->"+guestReplyDateMap);
+
+
+//------------------------------방명록& 방명록댓글 끝 ----------------------------------------
+
+
+//게시판-----------------------------
+        //postsDateCount  postReplyDateCount
+        //postsCountMap postsDateArray postDateMap
+        //postsBool postReplyBool
+         var postsCountMap = new Map();
+         var postsDateArray = [];
+         var postDateMap = new Map();
+
+         //현재 달력에 해당하는 게시판 데이터가 존재할때
+         let postsBool = false;
+         let postReplyBool =false;
+
+         $.map(postsDateCount, function(k, v){
+             //-console.log("게시판 $.map 진입 "+ k+", "+v)
+             let sliceDate =v.substr(0,7)
+             //console.log("서버에서 넘어온 데이터의 월-> "+ sliceDate)
+             //console.log("현재달력의 월-> "+calfirst)
+
+             if(calfirst == sliceDate){
+                 //-console.log(calfirst == v)//true
+                 postsBool = true;
+             }
+
+             let resultDate = new Date(v).getDate();
+             //console.log("admin_home.html 게시판 날짜중 일 -> "+ resultDate)
+             postsCountMap.set(resultDate, k);
+             postsDateArray.push(resultDate);
+             postDateMap.set(resultDate,v);
+         });//$.map
+
+         //-console.log("관리자페이지 달력 게시판 ->"+postsCountMap);
+         //-console.log("관리자페이지 달력 게시판 ->"+postsDateArray);
+         //-console.log("관리자페이지 달력 게시판 ->"+postDateMap);
+
+//게시판댓글-------------------------------------------
+         var postReplyCountMap = new Map();
+         var postReplyDateArray = [];
+         var postReplyDateMap = new Map();
+
+         $.map(postReplyDateCount, function(k, v){
+             //-console.log("게시판댓글 $.map 진입 "+k+", "+v)
+             let replyResultDate = new Date(v).getDate();
+             let sliceDate =v.substr(0,7)
+
+             if(calfirst == sliceDate){ //달력첫날과 일치할경우
+                 //-console.log(calfirst == v)//true
+                 postReplyBool = true;
+             }
+
+             //console.log("admin_home.html 게시판댓글 날짜중 일 -> "+ replyResultDate)
+             postReplyCountMap.set(replyResultDate, k);
+             postReplyDateArray.push(replyResultDate);
+             postReplyDateMap.set(replyResultDate,v);
+         });//$.map
+
+         //-console.log("관리자페이지 달력 게시판댓글 ->"+postReplyCountMap);
+         //-console.log("관리자페이지 달력 게시판댓글 ->"+postReplyDateArray);
+         //-console.log("관리자페이지 달력 게시판댓글 ->"+postReplyDateMap);
+
+//------------------------------게시판& 게시판댓글 끝 ----------------------------------------
+
+//문의글---------------------
+         let inquiryBool =false;
+
+         var inquiryCountMap = new Map();
+         var inquiryDateArray = [];
+         var inquiryDateMap = new Map();
+
+         $.map(inquiryDateCount, function(k, v){
+             //-console.log("문의글 $.map 진입 "+k+", "+v)
+             let inquiryResultDate = new Date(v).getDate();
+             let sliceDate =v.substr(0,7)
+
+             if(calfirst == sliceDate){ //달력첫날과 일치할경우
+                 //-console.log(calfirst == v)//true
+                 inquiryBool = true;
+             }
+
+             //inquiryDateArray inquiryCountMap inquiryDateMap
+
+             //console.log("admin_home.html 문의글 날짜중 일 -> "+ inquiryResultDate)
+             inquiryCountMap.set(inquiryResultDate, k);//날짜와 개수 Map형식
+             inquiryDateArray.push(inquiryResultDate);//날짜만 배열형식
+             inquiryDateMap.set(inquiryResultDate, v);//날짜와 일 Map형식
+         });//$.map
+
+
+         //-console.log("관리자페이지 달력 문의글 ->"+inquiryCountMap);
+         //-console.log("관리자페이지 달력 문의글 ->"+inquiryDateArray);
+         //-console.log("관리자페이지 달력 문의글 ->"+inquiryDateMap);
+
+//------------------------------문의글 끝 ----------------------------------------
+
+//회원---------------------------------
+         let memberBool =false;
+
+         var memberCountMap = new Map();
+         var memberDateArray = [];
+         var memberDateMap = new Map();
+
+         $.map(memberDateCount, function(k, v){
+             //-console.log("회원 $.map 진입 "+k+", "+v)
+             let memberResultDate = new Date(v).getDate();
+             let sliceDate =v.substr(0,7)
+
+             if(calfirst == sliceDate){ //달력첫날과 일치할경우
+                 //-console.log(calfirst == v)//true
+                 memberBool = true;
+             }
+
+            //memberDateCount memberCountMap memberDateArray memberDateMap
+
+             //console.log("admin_home.html 회원 날짜중 일 -> "+ memberResultDate)
+             memberCountMap.set(memberResultDate, k);//날짜와 개수 Map형식
+             memberDateArray.push(memberResultDate);//날짜만 배열형식
+             memberDateMap.set(memberResultDate, v);//날짜와 일 Map형식
+         });//$.map
+
+
+         //-console.log("관리자페이지 달력 회원 ->"+memberCountMap);
+         //-console.log("관리자페이지 달력 회원 ->"+memberDateArray);
+         //-console.log("관리자페이지 달력 회원 ->"+memberDateMap);
+
+//------------------------------회원 끝 ----------------------------------------
+
+
+//분양글 ---------------------------------
+         let dogsellBool =false;
+
+         var dogsellCountMap = new Map();
+         var dogsellDateArray = [];
+         var dogsellDateMap = new Map();
+
+         $.map(dogsellDateCount, function(k, v){
+             //-console.log("분양글 $.map 진입 "+k+", "+v)
+             let dogsellResultDate = new Date(v).getDate();
+             let sliceDate =v.substr(0,7)
+
+             if(calfirst == sliceDate){ //달력첫날과 일치할경우
+                 //-console.log(calfirst == v)//true
+                 dogsellBool = true;
+             }
+
+            //dogsellDateCount dogsellCountMap dogsellDateArray dogsellDateMap
+
+             //console.log("admin_home.html 분양글 날짜중 일 -> "+ dogsellResultDate)
+             dogsellCountMap.set(dogsellResultDate, k);//날짜와 개수 Map형식
+             dogsellDateArray.push(dogsellResultDate);//날짜만 배열형식
+             dogsellDateMap.set(dogsellResultDate, v);//날짜와 일 Map형식
+         });//$.map
+
+
+         //-console.log("관리자페이지 달력 분양글 -> "+dogsellCountMap);
+         //-console.log("관리자페이지 달력 분양글 -> "+dogsellDateArray);
+         //-console.log("관리자페이지 달력 분양글 -> "+dogsellDateMap);
+
+//------------------------------분양글 끝 ----------------------------------------
+
+//------------------------------달력만들기 아래부터 ----------------------------------------
+
+
+         for (let i = 0; i < firstDay; i++) {
+              htmlDummy += `<div class="calnoColor"></div>`;
+         }//for
+
+
+         //일 넣으면 LocalDateTime 객체 반환하는 함수만들기
+         function getLocalDateTime(map, guestDay){
+             //console.log("admin_home.html 일 넣으면 LocalDate 객체 반환하는 함수만들기");
+             var getResult = map.get(guestDay)
+             //console.log(getResult);
+
+             return getResult;
+         }
+
+
+         day: for (let i = 1; i <= lastDay; i++) {
+             htmlDummy += `</div><div class="countAll">${i}<br>`;
+                 //방명록존재시
+                 guest: for(let t=0; t<guestDateArray.length; t++){
+                     if(guestDateArray[t]==i){
+                         var resultGuest = getLocalDateTime(guestDateMap, guestDateArray[t])
+                         //console.log(i+"일과 일치하는 방명록배열의 값 -> "+resultGuest+", 배열의 인덱스 "+t)
+                         htmlDummy += `<a style="color:#6f42c1" href="/admin/guestbook/list?yearmonth=${resultGuest}&tabtitle=guestbook">방명록개수${guestCountMap.get(i)}</a><br>`;
+
+                    }else{
+                         continue guest;
+                     }//if종료 방명록
+                 }//for종료 방명록 guest
+
+                 //같은 날짜에 방명록도 존재하고 방명록댓글도 존재할때
+                 guestreply: for(let r=0; r<guestReplyDateArray.length; r++){
+
+                      if(guestReplyDateArray[r]==i){
+                          var resultGuestReply = getLocalDateTime(guestReplyDateMap, guestReplyDateArray[r])
+                          //console.log(i+"일과 일치하는 방명록댓글 배열의 값 -> "+resultGuestReply+", 배열의 인덱스 "+r)
+                          htmlDummy += `<a style="color:#0dcaf0;" href="/admin/guestbookreply/list?yearmonth=${resultGuestReply}&tabtitle=guestbookreply">방명록댓글개수${guestReplyCountMap.get(i)}</a><br>`;
+                     }else{
+                         continue guestreply;
+                     }//if종료 방명록댓글
+                 }//for종료 방명록댓글 guestreply
+
+
+                 //같은 날짜에 방명록도 존재하고 방명록댓글도 게시판도 존재할때
+                 posts: for(let p=0; p<postsDateArray.length; p++){
+
+                      if(postsDateArray[p]==i){
+                          var resultPosts = getLocalDateTime(postDateMap, postsDateArray[p])
+                          //-console.log(i+"일과 일치하는 게시판 배열의 값 -> "+resultPosts+", 배열의 인덱스 "+p)
+                          htmlDummy += `<a style="color:#fd7e14;" href="/admin/post/list?yearmonth=${resultPosts}&tabtitle=posts">게시글개수${postsCountMap.get(i)}</a><br>`;
+                     }else{
+                         continue posts;
+                     }//if종료 게시판
+                 }//for종료 게시판 posts
+
+
+                //postsDateCount  postReplyDateCount
+                //postsCountMap postsDateArray postDateMap
+                //postsBool postReplyBool
+                //postReplyCountMap postReplyDateArray postReplyDateMap
+
+                 //같은 날짜에 방명록도 존재하고 방명록댓글도 게시판도 게시판댓글도 존재할때
+                 postreply: for(let pr=0; pr<postReplyDateArray.length; pr++){
+
+                     if(postReplyDateArray[pr]==i){
+                          var resultpostReply = getLocalDateTime(postReplyDateMap, postReplyDateArray[pr])
+                          //-console.log(i+"일과 일치하는 게시글댓글 배열의 값 -> "+resultpostReply+", 배열의 인덱스 "+pr)
+                          htmlDummy += `<a style="color:#20c997;" href="/admin/postreply/list?yearmonth=${resultpostReply}&tabtitle=postreply">게시글댓글개수${postReplyCountMap.get(i)}</a><br>`;
+                     }else{
+                         continue postreply;
+                     }//if종료 게시판댓글
+                 }//for죵료 게시판댓글 postreply
+
+
+                 //같은 날짜에 방명록도 존재하고 방명록댓글도 게시판도 게시판댓글도 문의글도 존재할때
+                 inquiry: for(let iq=0; iq<inquiryDateArray.length; iq++){
+                     //inquiryDateArray inquiryCountMap inquiryDateMap
+                     if(inquiryDateArray[iq]==i){
+                          var resultinquiry = getLocalDateTime(inquiryDateMap, inquiryDateArray[iq])
+                          //-console.log(i+"일과 일치하는 문의글 배열의 값 -> "+resultinquiry+", 배열의 인덱스 "+iq)
+                          htmlDummy += `<a style="color:#8B4513;" href="/admin/inquiry/list?yearmonth=${resultinquiry}&tabtitle=inquiry">문의글수${inquiryCountMap.get(i)}</a><br>`;
+                     }else{
+                         continue inquiry;
+                     } //if종료 문의글
+                 }//for죵료 문의글 inquiry
+
+                 //같은 날짜에 방명록도 존재하고 방명록댓글도 게시판도 게시판댓글도 문의글도 회원도 존재할때
+                 member: for(let m=0; m<memberDateArray.length; m++){
+                    //memberDateCount  / memberCountMap memberDateArray memberDateMap resultmember
+                     if(memberDateArray[m]==i){
+                          var resultmember = getLocalDateTime(memberDateMap, memberDateArray[m])
+                          //-console.log(i+"일과 일치하는 회원 배열의 값 -> "+resultmember+", 배열의 인덱스 "+m)
+                          htmlDummy += `<a style="color:#dc3545;" href="/admin/member/list?yearmonth=${resultmember}&tabtitle=member">가입회원수${memberCountMap.get(i)}</a><br>`;
+
+                          //continue day;
+                         //마지막 for문에서만 day로 이동하게 해야한다.
+                     }else{
+                         continue member;
+                     }//if종료 회원
+                 }//for죵료 회원 member
+
+                //같은 날짜에 방명록도 존재하고 방명록댓글도 게시판도 게시판댓글도 문의글도 회원도 분양글도 존재할때
+                 dogsell: for(let m=0; m<dogsellDateArray.length; m++){
+                    //dogsellDateCount  / dogsellCountMap dogsellDateArray dogsellDateMap resultdogsell
+                     if(dogsellDateArray[m]==i){
+                          var resultdogsell = getLocalDateTime(dogsellDateMap, dogsellDateArray[m])
+                          //-console.log(i+"일과 일치하는 분양글 배열의 값 -> "+resultdogsell+", 배열의 인덱스 "+m)
+                          htmlDummy += `<a style="color:#DA70D6" href="/admin/dogsell/list?yearmonth=${resultdogsell}&tabtitle=dogsell">분양글수${dogsellCountMap.get(i)}</a><br>`;
+
+                          continue day;
+                         //마지막 for문에서만 day로 이동하게 해야한다.
+                     }else{
+                         continue dogsell;
+                     }//if종료 분양글
+                 }//for죵료 분양글 dogsell
+
+
+             }//for종료 바깥쪽 day
+
+        if(nextDay !=0){
+            for (let i = limitDay; i < nextDay; i++) {
+                 htmlDummy += `</div><div class="calnoColor"></div>`;
+            }
+        }else{
+            htmlDummy += `</div>`;
+        }
+
+    document.querySelector(`.caldateBoard`).innerHTML = htmlDummy;
+    document.querySelector(`.caldateTitle`).innerText = `${currentYear}년 ${currentMonth}월`;
+}
+
+
+makeCalendar(date);
+
+
+// 이전달 이동
+document.querySelector(`.calprevDay`).onclick = () => {
+var resultbeforeMonth =changeBeforeMonth();
+
+location.href=`/admin/home/home?yearmonth=${resultbeforeMonth}`
+
+//makeCalendar(new Date(date.setMonth(date.getMonth() - 1)));
+}
+
+// 다음달 이동
+document.querySelector(`.calnextDay`).onclick = () => {
+var resultafterMonth =changeAfterMonth();
+location.href=`/admin/home/home?yearmonth=${resultafterMonth}`
+
+//makeCalendar(new Date(date.setMonth(date.getMonth() + 1)));
+}
+
+//달력의 a태그의 개수가져오기
+//$(".countAll a").on("click", "a", function(){
+
+$(".countAll a").on("click", function(e){
+    //-console.log("admin_home.html 일자의 <a>태그 클릭이벤트 진입");
+    var aTag = [];
+    var aHtml = [];
+    var outerDiv = $(this).closest("div");
+    var aa = outerDiv.find("a");
+    //-console.log(aa.length)
+
+    var guestcount;
+    var guestreplycount;
+    var postcount;
+    var postreplycount;
+    var inquirycount;
+    var membercount;
+    var dogsellcount;
+
+    for(let i=1; i<aa.length; i++){
+        //-console.log(aa[i].innerHTML);
+        var name = aa[i].innerHTML
+
+        if(name.startsWith("방명록개수")){
+            guestcount = name.substr(-1)
+            //-console.log(guestcount)
+        }
+
+        if(name.startsWith("방명록댓글개수")){
+            guestreplycount = name.substr(-1)
+            //-console.log(guestreplycount)
+        }
+
+        if(name.startsWith("게시글개수")){
+            postcount = name.substr(-1)
+            //-console.log(postcount)
+        }
+
+        if(name.startsWith("게시글댓글개수")){
+            postreplycount = name.substr(-1)
+            //-console.log(postreplycount)
+        }
+
+        if(name.startsWith("문의글수")){
+            inquirycount = name.substr(-1)
+            //-console.log(inquirycount)
+        }
+
+        if(name.startsWith("가입회원수")){
+            membercount = name.substr(-1)
+            //-console.log(membercount)
+        }
+
+        if(name.startsWith("분양글수")){
+            dogsellcount = name.substr(-1)
+            //-console.log(dogsellcount)
+        }
+
+    }//for문종료
+
+});//a태그
+
+});//제이쿼리
+</script>
+</html>

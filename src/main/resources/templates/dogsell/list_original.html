@@ -1,0 +1,422 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns="http://www.w3.org/1999/html"
+>
+
+<th:block th:replace="~{layout/article_about_dog :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    강아지 분양목록
+                </div>
+                <!-- 로그인하지 않은경우 -->
+                <th:block th:if="${loginMember ==null}">
+                    <a class="btn btn-outline-primary" th:href="|@{/member/login}|">로그인</a>
+                    <a class="btn btn-outline-primary" th:href="|@{/member/join}|">회원가입</a>
+                </th:block>
+
+                <!-- 로그인한 경우 -->
+                <th:block th:if="${loginMember !=null}">
+                    <b>[[${loginMember}]]</b>님 반갑습니다^^ &nbsp;
+                    <a class="btn btn-outline-danger" th:href="|@{/dogsell/register}|">분양등록</a>
+                    <a class="btn btn-outline-success" th:href="@{/member/logout}">로그아웃</a>
+                    <a class="btn btn-outline-primary" th:href="|@{/dogsell/list}|">분양글목록이동</a>
+                </th:block>
+
+
+                <section class="py-5">
+                    <div class="container px-5 outerSearchDiv">
+
+<!-- 로그인했고 분양글이 존재하지만 찜한 상품 없을경우-->
+                        <th:block th:if="${!#lists.isEmpty(dsListDto)} and ${loginMember} !=null and ${countWithNum} ==null">
+                            <h2 class="fw-bolder fs-5 mb-4">
+                                새로올라온 분양강아지들 &nbsp;&nbsp;&nbsp;&nbsp;
+                            </h2>
+
+                            <nav class="navbar navbar-dark bg-primary">
+                                <div class="container-fluid">
+                                <form class="row g-3">
+                                    <div class="col-auto" action="/dogsell/list/search" method="get">
+                                        강아지품종검색
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="search" class="form-control">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-light mb-3 searchBtn" type="submit">찾기</button>
+                                        <button class="btn btn-outline-light mb-3 resetSearch" type="reset">초기화</button>
+                                    </div>
+                                </form>
+                                </div>
+                            </nav>
+
+                        </th:block>
+
+ <!-- 로그인한 회원이면서 분양글이 존재할때 찜한 수가 존재할때  찜있는경우-->
+                        <th:block th:if="${!#lists.isEmpty(dsListDto)} and ${loginMember} !=null and ${countWithNum} !=null">
+                        <h2 class="fw-bolder fs-5 mb-4">
+                            새로올라온 분양강아지들 &nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" class="btn btn-warning">
+                                찜한상품수 <span class="badge text-bg-danger wishnumSpan">[[${countWishNum}]]</span>
+                            </button>
+                        </h2>
+
+                        <nav class="navbar navbar-dark bg-primary">
+                            <div class="container-fluid">
+                                <form class="row g-3">
+                                    <div class="col-auto" action="/dogsell/list/search" method="get">
+                                        강아지품종검색
+                                    </div>
+                                    <div class="col-auto">
+                                        <input type="search" class="form-control">
+                                    </div>
+                                    <div class="col-auto">
+                                        <button class="btn btn-outline-light mb-3 searchBtn" type="submit">찾기</button>
+                                        <button class="btn btn-outline-light mb-3 resetSearch" type="reset">초기화</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </nav>
+                        </th:block>
+
+<!------------------ 이 기점으로 로그인하면 위쪽 아니면 아래쪽이다. -------------------------------->
+<!-- 로그인하지 않았지만 분양글이 존재할때 -->
+                        <th:block th:if="${!#lists.isEmpty(dsListDto)} and ${loginMember} ==null">
+                            <h2 class="fw-bolder fs-5 mb-4">
+                                새로올라온 분양강아지들 &nbsp;&nbsp;&nbsp;&nbsp;
+                            </h2>
+                            <div class="d-flex align-items-center justify-content-between flex-column flex-xl-row text-center text-xl-start">
+                                <nav class="navbar navbar-dark bg-primary">
+                                    <div class="container-fluid">
+                                        <form class="row g-3">
+                                            <div class="col-auto" action="/dogsell/list/search" method="get">
+                                                강아지품종검색
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="search" class="form-control">
+                                            </div>
+                                            <div class="col-auto">
+                                                <button class="btn btn-outline-light mb-3 searchBtn" type="submit">찾기</button>
+                                                <button class="btn btn-outline-light mb-3 resetSearch" type="reset">초기화</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </nav>
+                            </div>
+                        </th:block>
+
+                        <th:block th:if="${#lists.isEmpty(dsListDto)}">
+                            <img class="card-img-top" style="height:100px;width:auto;"
+                                 src="/image/imoji/waiting.jpg" />
+                            아직 등록된 분양글이 없습니다. 먼저 등록해주세요^^
+                        </th:block>
+
+                        <th:block th:if="${#lists.isEmpty(dsListDto)} and ${searchBreed} !=null">
+                            <img class="card-img-top" style="height:100px;width:auto;"
+                                 src="/image/imoji/waiting.jpg" />
+                            검색조건에 맞는 분양글 품종이 존재하지 않습니다.
+                        </th:block>
+
+                        <br>
+
+<!------------------ 이 기점으로 강아지목록 위 아래 여부 -------------------------------->
+                        <div class="row gx-5 searchDiv">
+                            <th:block th:each="ds:${dsListDto}" th:if="${#lists.isEmpty(dsListDtoWishNum) and #lists.isEmpty(dsListDtoWishNumNot)}">
+                                <div class="col-lg-4 mb-5 firstDiv">
+                                    <div class="card h-100 shadow border-0 secondDiv" style="display:text-align">
+
+                                        <img style="height:210px;width:auto;"
+                                             th:src="|/dogselldisplay?fileName=${ds.dsiDtoList[0].getImageURL()}|"
+                                        />
+                                        <!--
+                                        style="width:auto; height:auto; max-width:210px; max-height:210px; display:block; margin: 0 auto;"
+                                             class="card-img-top" class="img-fluid" ;height:150px;width:auto;
+                                        style="display:block;margin-left:auto;margin-right:auto;"-->
+
+                                        <div class="card-body p-4">
+                                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">
+                                                New
+                                            </div>
+                                            <br>
+                                            <div class="h5 card-title mb-3">
+                                                 <span class="fst-normal fs-6 starSpan">관심목록에 담기
+                                                    <a style="outline:none;background-color:white;"
+                                                       type="button" class="starBtn" th:data-dno="${ds.dno}" th:data-membername="${ds.membername}"
+                                                       th:data-name="${loginMember}" th:data-complete="${ds.complete}">
+                                                           <i class="bi bi-star text-warning"></i>
+                                                    </a>
+                                                 </span>
+                                                <br>
+                                                <span class="fst-normal fs-6">암수:&nbsp;&nbsp;</span><span class="fw-bold fs-5">[[${ds.gender}]]</span><br>
+                                                <span class="fst-normal fs-6">몸무게:&nbsp;&nbsp;</span><span class="fw-bold">[[${ds.weight}]]kg</span><br>
+                                                <span class="fst-normal fs-6">품종:&nbsp;&nbsp;</span><span class="fw-bold">[[${ds.type}]]</span><br>
+                                                <span class="fst-normal fs-6">나이:&nbsp;&nbsp;</span><span class="fw-bold">[[${ds.age}]]살</span><br>
+                                                <span class="fst-normal fs-6">예방접종:&nbsp;&nbsp;</span><span class="fw-bold">[[${ds.health}]]</span><br>
+                                                <span class="fst-normal fs-6">작성일:&nbsp;&nbsp;</span><span class="fw-bold">[[${#temporals.format(ds.createdDate,'yyyy-MM-dd')}]]</span><br>
+                                                <br>
+                                                <a th:href="|@{/dogsell/read?dno={dno}(dno=${ds.dno})}|"style="text-align:right;">
+                                                    <span class="fw-bold">보러가기
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                                            <div class="d-flex align-items-end justify-content-between sell">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+<!------------------------- 강아지목록이다 로그인한 회원의 찜한 강아지가 있을 경우-->
+                            <th:block th:each="dtoWish:${dsListDtoWishNum}">
+                                <div class="col-lg-4 mb-5 firstDiv">
+                                    <div class="card h-100 shadow border-0 secondDiv" style="display:text-align">
+                                        <img style="height:210px;width:auto;"
+                                             th:src="|/dogselldisplay?fileName=${dtoWish.dsiDtoList[0].getImageURL()}|"
+                                        />
+<!-- class="card-img-top" style="width:auto; height:auto; max-width:210px; max-height:210px; display:block; margin: 0 auto;"
+                                          style="display:block;margin-left:auto;margin-right:auto;"-->
+                                        <div class="card-body p-4">
+                                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">
+                                                New    <th:block th:if="${loginMember} !=null and ${dtoWish.membername==loginMember}">나의반려견</th:block>
+                                            </div>
+                                            <br>
+                                            <div class="h5 card-title mb-3">
+                                                 <span class="fst-normal fs-6 starSpan">관심목록에 담기
+                                                    <a style="outline:none;background-color:white;"
+                                                       type="button" class="starBtn" th:data-dno="${dtoWish.dno}" th:data-membername="${dtoWish.membername}"
+                                                     th:data-name="${loginMember}"  th:data-complete="${dtoWish.complete}">
+                                                           <i class="bi bi-star-fill text-warning"></i>
+                                                    </a>
+                                                 </span>
+                                                    <br>
+                                                 <span class="fst-normal fs-6">암수:&nbsp;&nbsp;</span><span class="fw-bold fs-5">[[${dtoWish.gender}]]</span><br>
+                                                 <span class="fst-normal fs-6">몸무게:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.weight}]]kg</span><br>
+                                                 <span class="fst-normal fs-6">품종:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.type}]]</span><br>
+                                                 <span class="fst-normal fs-6">나이:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.age}]]살</span><br>
+                                                 <span class="fst-normal fs-6">예방접종:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.health}]]</span><br>
+                                                 <span class="fst-normal fs-6">작성일:&nbsp;&nbsp;</span><span class="fw-bold">[[${#temporals.format(dtoWish.createdDate,'yyyy-MM-dd')}]]</span><br>
+                                                 <br>
+                                                 <a th:href="|@{/dogsell/read?dno={dno}(dno=${dtoWish.dno})}|"style="text-align:right;">
+                                                    <span class="fw-bold">보러가기
+                                                    </span>
+                                                 </a>
+                                             </div>
+                                        </div>
+                                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                                            <div class="d-flex align-items-end justify-content-between sell">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+
+ <!------------------------- 강아지목록이다 로그인한 회원의 찜한 강아지가 없을경우-->
+                            <th:block th:each="dtoWish:${dsListDtoWishNumNot}">
+                                <div class="col-lg-4 mb-5 firstDiv">
+                                    <div class="card h-100 shadow border-0 secondDiv" style="display:text-align">
+
+                                        <img style="height:210px;width:auto;"
+                                             th:src="|/dogselldisplay?fileName=${dtoWish.dsiDtoList[0].getImageURL()}|"
+                                        />
+
+<!-- style="display:block;margin-left:auto;margin-right:auto;" style="height:150px;weight:200px;overflow: hidden;"
+style="width:auto; height:auto; max-width:210px; max-height:210px; display:block; margin: 0 auto;"
+                                        class="card-img-top"
+                                             th:src="|/dogselldisplay?fileName=${dtoWish.dsiDtoList[0].getImageURL()}|"
+                                        />
+                                        -->
+                                        <div class="card-body p-4">
+                                            <div class="badge bg-primary bg-gradient rounded-pill mb-2">
+                                                New     <th:block th:if="${loginMember} !=null and ${dtoWish.membername==loginMember}">나의반려견</th:block>
+                                            </div>
+                                            <br>
+                                            <div class="h5 card-title mb-3">
+                                                 <span class="fst-normal fs-6 starSpan">관심목록에 담기
+                                                    <a style="outline:none;background-color:white;"
+                                                       type="button" class="starBtn" th:data-dno="${dtoWish.dno}" th:data-membername="${dtoWish.membername}"
+                                                       th:data-name="${loginMember}" th:data-complete="${dtoWish.complete}">
+                                                           <i class="bi bi-star text-warning"></i>
+                                                    </a>
+                                                 </span>
+                                                <br>
+                                                <span class="fst-normal fs-6">암수:&nbsp;&nbsp;</span><span class="fw-bold fs-5">[[${dtoWish.gender}]]</span><br>
+                                                <span class="fst-normal fs-6">몸무게:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.weight}]]kg</span><br>
+                                                <span class="fst-normal fs-6">품종:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.type}]]</span><br>
+                                                <span class="fst-normal fs-6">나이:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.age}]]살</span><br>
+                                                <span class="fst-normal fs-6">예방접종:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.health}]]</span><br>
+                                                <span class="fst-normal fs-6">작성일:&nbsp;&nbsp;</span><span class="fw-bold">[[${#temporals.format(dtoWish.createdDate,'yyyy-MM-dd')}]]</span><br>
+                                                <br>
+                                                <a th:href="|@{/dogsell/read?dno={dno}(dno=${dtoWish.dno})}|"style="text-align:right;">
+                                                    <span class="fw-bold">보러가기
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                                            <div class="d-flex align-items-end justify-content-between sell">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- firstDiv -->
+                            </th:block>
+
+                        </div><!-- searchDiv -->
+                    </div><!-- outerSearchDiv -->
+                </section>
+            </div><!-- 컨테이너 -->
+        </article>
+    </th:block>
+</th:block>
+<script th:inline="javascript">
+
+var listForm = $("form");
+
+var loginMember =[[${loginMember}]];
+
+//-console.log("dogsell-list 회원명 -> "+loginMember);
+
+function formatTime(str){
+   //-console.log("list.html formatTime() 함수 진입 - 강아지 품종검색 클릭이벤트 진입 후 ajax success() -> "+str);
+    var date = new Date(str);
+
+    return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
+}
+
+
+//즉시실행함수
+(function(){
+
+var starBtnList =$(".starBtn");
+
+$.each(starBtnList, function(i, o){
+    var datadno = $(this).data("dno");
+    var complete = $(this).data("complete");
+
+    if(complete){
+        //-console.log("post-list.html 즉시실행함수 진입 - 분양완료한 게시물번호를 목록에서 찾을때 진입 해당 게시물 번호 -> "+ datadno);
+
+        $(this).closest(".col-lg-4").css("filter","opacity(50%)").css("position","relative").css("z-index","0");
+        $(this).closest(".col-lg-4").find(".card-footer").html(`<h3 class="text-muted fst-italic">분양완료</h3>`)
+
+        //추가
+        let eachAtag =  $(this).find(".fw-bold").closest("a");
+        console.log("list.html 에서 분양완료 eachAtag -> "+eachAtag)
+        eachAtag.hide()
+    }//if문
+});
+})();
+
+
+
+
+$(".searchBtn").on("click", function(){
+    //-console.log("list.html 강아지 품종검색 클릭이벤트 진입 검색한 강아지품종 ->")
+
+    const searchBreed = $("input[name='searchBreed']").val();
+    //-console.log(searchBreed)
+    const regex = new RegExp("^[가-힣a-zA-Z]+$");
+    if(!regex.test(searchBreed)){
+        //-console.log("list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 오류발생")
+        alert("한글과 영문만 입력가능합니다.")
+        $("input[name='searchBreed']").val("").focus();
+    }else{
+        //-console.log("list.html 강아지품종검색 한글 영문 이외의 문자 유효성체크 확인후 submit() 처리")
+        $("form").submit();
+    }
+});
+
+
+//중복 위시리스트 담는상품의 경우
+$(".starfill").on("click", function(){
+    //-console.log("dogsell-list .starfill 클릭이벤트 진입");
+    alert(loginMember+"회원님! 위시리스트에 이미 담은 상품입니다.\n상품삭제는 마이페이지 -> 위시리스트에서 가능합니다!");
+});
+
+//처음 위시리스트담는상품의경우
+$(".starBtn").on("click", function(){
+    //-console.log("dogsell-list .starBtn 클릭이벤트 진입");
+
+    var name=$(this).data("name"); //로그인멤버
+
+    if(name ==null){
+        //-console.log("dogsell-list .starBtn 클릭이벤트 진입 제일먼저 로그인한 회원인지확인 로그인하지 않으면 alert창 띄우기 ");
+        alert("로그인하신 회원만 찜설정이 가능합니다!")
+        return;
+    }
+
+    var dno=$(this).data("dno");
+    //-console.log("로그인한 회원인 찜한 강아지분양글번호 -> "+dno);
+    //th:data-dno="${dto.dno}" th:data-name="${loginMember}"
+    var aTag =$(this).closest("a");
+    //-console.log("현재 찜버튼 클릭후 가까이있는 <a>태그 출력 -> ")
+    //-console.log(aTag);
+
+    var membername=$(this).data("membername");//분양글작성자
+
+    //-console.log("dogsell-list .starBtn 클릭이벤트 진입 name -> "+name +", membername -> "+membername);
+
+    if(name ===membername){
+        alert("본인의 강아지는 찜할수가 없습니다.");
+        return;
+    }
+
+    $.ajax({
+        url:'/wishnum/insert',
+        type:"get",
+        data: {wishNum:dno},
+        contentType:"application/json;charset=utf-8",
+
+        success: function(result){
+            //-console.log("dogsell-list .starBtn 클릭이벤트 진입 $.ajax success() 진입 - 결과 -> "+ result);
+
+            if(!result){
+                //-console.log("dogsell-list .starBtn 클릭이벤트 진입 $.ajax success() 진입 - 이미 담은 상품의 경우");
+
+                alert(loginMember+"회원님! 이미 담은 상품입니다.");
+            }
+
+            //찜한상품수가 1개일경우
+            if(result == 1){
+                //$(".wishnumSpan").html(result);
+                //aTag.html(`<i class="bi bi-star-fill text-warning"></i>`);
+                alert("나의 관심목록에 담았습니다! 현재 "+result+"개의 찜한상품이 있습니다. \n마이페이지에서 확인할수있어요!");
+                location.reload();
+            }
+
+            //찜한상품수가 2개이상일경우
+            if(result >= 2){
+                $(".wishnumSpan").html(result);
+                aTag.html(`<i class="bi bi-star-fill text-warning"></i>`);
+                alert("나의 관심목록에 담았습니다! 현재 "+result+"개의 찜한상품이 있습니다. \n마이페이지에서 확인할수있어요!");
+            }
+        }
+    });//$.ajax
+});
+
+
+$(".resetSearch").on("click", function(){
+    //-console.log("list.html 검색 reset버튼 클릭 진입");
+
+    $("form").empty();
+    //$("form").submit(); 검색컨트롤러이동되기에 이건 사용하면안된다.
+    location.reload();
+});
+
+
+var modifySuccess =[[${modifySuccess}]];
+if(modifySuccess !=null){
+    alert(modifySuccess+"번 강아지분양글이 수정되었습니다.");
+}
+
+var removeSuccess =[[${removeSuccess}]];
+if(removeSuccess !=null){
+    alert(removeSuccess+"번 강아지분양글이 삭제되었습니다.");
+}
+
+</script>
+
+</html>

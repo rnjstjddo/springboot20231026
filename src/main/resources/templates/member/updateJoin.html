@@ -1,0 +1,108 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="~{layout/article_about_membermodify :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    회원정보 확인 및 수정
+                </div>
+
+                <!-- <a class="btn btn-outline-success" th:href="|@{/}?${pageRequestDto.getLink()}|">목록으로</a>-->
+
+                <a class="btn btn-outline-success" th:href="@{/home/home}">홈화면</a>
+
+                <br>
+                <br>
+                <form method="post" action="/member/updateJoin" >
+
+                    <input type="hidden" name="password" th:value="${memberDTO.password}" id="passwordorigin">
+
+                    <div class="col-12">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" class="form-control" name="name" id="name"
+                               placeholder="닉네임을 입력해주세요" th:value="${memberDTO.name}" readonly>
+                    </div>
+                    <br>
+                    <br>
+                    <th:block th:if="${#strings.equals(memberDTO.fromSocial,false)}">
+                    <div class="col-12">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" class="form-control" autocomplete="off"
+                               id="passwordcheck" placeholder="비밀번호를 입력해주세요" required>
+                    </div>
+                    <br>
+                    <br>
+                    <div class="col-12">
+                        <label class="form-label">비밀번호확인</label>
+                        <input type="password" class="form-control" name="password" autocomplete="off"
+                               id="password" placeholder="비밀번호를 입력해주세요" required>
+                    </div>
+                    <br>
+                    <br>
+                    </th:block>
+
+                    <div class="col-12">
+                        <label class="form-label">이메일</label>
+                        <input type="text" class="form-control" name="email" id="email"
+                               placeholder="이메일을 입력해주세요" th:value="${memberDTO.email}" readonly>
+                    </div>
+
+
+                    <br>
+                    <br>
+
+                    <div class="col-12">
+                        <label class="form-label">가입일자</label>
+                        <input type="text" class="form-control"
+                                th:value="${#temporals.format(memberDTO.createdDate,'yyyy-MM-dd')}" readonly>
+                    </div>
+                    <br>
+                    <br>
+
+                    <!--
+
+                    <div class="col-12">
+                        <label class="form-label">자동로그인</label>
+                        <input type="checkbox" name="remember-me" id="remember-me">
+                    </div>
+-->
+
+                    <div style="display:inline-block;text-align:right;">
+                        <button type="reset" class="btn btn-outline-secondary">초기화</button>
+                        <button type="button" class="btn btn-outline-warning" id="updateJoinBtn">위 내용으로 회원정보수정</button>
+                        <!--<button type="button" class="btn btn-outline-danger withdraw">회원탈퇴</button>-->
+                    </div>
+                </form>
+            </div>
+        </article>
+
+    </th:block>
+<script th:inline="javascript">
+
+
+$(".withdraw").on("click", function(){
+//-console.log("member-updateJoin.html 탈퇴버튼 클릭이벤트진입");
+
+    if(confirm("회원탈퇴하시면 회원님과 관련된 모든 등록된 글도 삭제됩니다.")){
+
+        $.ajax({
+            url:"/"
+        })
+    }
+
+
+});
+
+</script>
+</th:block>
+
+</html>

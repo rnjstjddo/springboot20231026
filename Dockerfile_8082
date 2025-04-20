@@ -1,0 +1,4 @@
+FROM openjdk:11
+ARG JAR_FILE=./build/libs/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java", "-jar", "-Dspring.config.location=classpath:/application.properties,classpath:/application-oauth.properties,classpath:/application-real-db.properties,classpath:/application-real2.properties", "-Dspring.profiles.active=real2", "/app.jar"]

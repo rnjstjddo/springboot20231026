@@ -1,0 +1,620 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about_dog :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    강아지 분양정보
+                </div>
+
+                <a class="btn btn-outline-success" th:href="|@{/dogsell/list}|">목록으로</a>
+
+                <form>
+                    <br>
+                    <div class="mb-3">
+                        분양등록번호
+                        <input class="form-control" type="text"  name="dno" id="dno"  th:value="${readDto.dno}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title" id="title"  placeholder="제목을 작성해주세요"
+                               th:value="${readDto.title}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        작성자
+                        <input class="form-control" type="text"  name="writer"  id="writer"
+                               th:value="${readDto.writer}" readonly/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        강아지나이
+                        <input class="form-control" type="text"  name="age"  id="age"
+                               th:value="${readDto.age}" readonly/>
+                    </div>
+                    <br>  <div class="mb-3">
+                        강아지몸무게
+                        <input class="form-control" type="text"  name="weight"  id="weight"
+                               th:value="${readDto.weight}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        품종
+                        <input class="form-control" type="text"  name="type"  id="type"
+                               th:value="${readDto.type}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        이름
+                        <input class="form-control" type="text"  name="name"  id="name"
+                               th:value="${readDto.name}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        암수
+                        <input class="form-control" type="text"  name="gender"  id="gender"
+                               th:value="${readDto.gender}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        건강상태
+                        <input class="form-control" type="text"  name="health"  id="health"
+                               th:value="${readDto.health}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        <label class="form-label">내용</label>
+                        <textarea class="form-control"  name="content"  id="content" rows="3" readonly>[[${readDto.content}]]</textarea>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        분양희망가격
+                        <input class="form-control" type="text"  name="price"  id="price"
+                               th:value="${readDto.price}" readonly/>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        작성일자
+                        <input class="form-control" type="text"  name="createdDate" th:value="${#temporals.format(readDto.createdDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+                    <div class="mb-3">
+                        수정일자
+                        <input class="form-control" type="text"  name="modifiedDate" th:value="${#temporals.format(readDto.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+
+                    <th:block th:if="${readDto.dsiDtoList ==null}">
+
+                        <b>아직 사진이 올라오지 않았습니다.</b>
+                        <br><br>
+                    </th:block>
+
+                    <th:block th:if="${readDto.dsiDtoList !=null}">
+                    <div class="mb-3">
+                    첨부파일
+                        <div class="row row-cols-1 row-cols-md-3 g-4 uploadResult">
+                            <ul style="display:flex;flex-direction:row;flex-wrap:nowrap;">
+                            </ul>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    </th:block>
+
+                    <div class="col-12" style="text-align: center;">
+                        <th:block th:if="${loginMember !=null and loginMember == readDto.writer}">
+                            <button type="button" style="display:inline-block;" class="btn btn-outline-primary" id="modifyBtn">분양정보 수정하러하기</button>
+                            <button type="button" style="display:inline-block;" class="btn btn-outline-danger" id="removeBtn">분양정보 삭제하기</button>
+                            <button type="button" style="display:inline-block;" class="btn btn-outline-warning" id="completeBtn">분양완료 표시하기</button>
+                            <!--<button type="reset"  style="display:inline-block;" class="btn btn-outline-secondary">초기화</button>-->
+                        </th:block>
+                    </div>
+                </form>
+            </div>
+
+
+            <br>
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    분양 댓글
+                </div>
+                <br>
+                <a class="btn btn-outline-danger replyRegisterBtn" type="button">댓글등록하기</a>
+                <a class="btn btn-outline-success replyListBtn" type="button">댓글목록닫기</a>
+                <br>
+                <br>
+                <div class="replyList">
+                    <table class="table">
+                        <tr>
+                            <th width='10%' scope="col">번호</th>
+                            <th width='15%' scope="col">댓글자</th>
+                            <th width='40%' scope="col">내용</th>
+                            <th width='15%' scope="col">작성일자</th>
+                            <th width='15%' scope="col">비고</th>
+                        </tr>
+
+                        <th:block th:each="rDto:${rDtoList}">
+                        <tr class='rDtoTr' th:data-drno="${rDto.drno}" th:data-replyer="${rDto.replyer}"
+                            th:data-text="${rDto.text}" th:data-createddate="${rDto.createdDate}"
+                            th:data-modifieddate="${rDto.modifiedDate}">
+                            <td>[[${rDto.drno}]]</td>
+                            <td>[[${rDto.replyer}]]</td>
+                            <td>[[${rDto.text}]]</td>
+                            <td>[[${#temporals.format(rDto.createdDate, 'yyyy-MM-dd HH:mm:ss')}]]</td>
+                            <td>
+                                <a  th:data-drno="${rDto.drno}" th:data-replyer="${rDto.replyer}"
+                                         th:data-text="${rDto.text}" th:data-createddate="${rDto.createdDate}"
+                                         th:data-modifieddate="${rDto.modifiedDate}"
+                                         type="button" style="display:inline-block;" class="btn btn-outline-primary btn-sm" id="replyListReadBtn">조회</a>
+                                <th:block th:if="${rDto.replyer == loginMember}" >
+                                    <a type="button" style="display:inline-block;" class="btn btn-outline-danger btn-sm" th:data-drno="${rDto.drno}" id="replyListModifyBtn">삭제</a>
+                                </th:block>
+                            </td>
+                        </tr>
+                        </th:block>
+                   </table>
+                </div>
+
+                <div class="col pageList" >
+                    <ul class="pagination replyPaging">
+
+                    </ul>
+                </div>
+
+                <!-- 댓글등록 모달창 -->
+                <div class="modal reviewModalRegisterDiv" tabindex="-1"  >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">분양댓글등록</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card-body">
+                                    <div class="mb-3" id="modalReviewMidDiv">
+                                        <p>
+                                            <label class="form-label">댓글자</label>
+                                            <input type="text" class="form-control" id="modalReviewReplyer" th:value="${loginMember}" readonly>
+                                        </p>
+                                    </div>
+
+                                    <div class="mb-3" id="modalReviewTextDiv">
+                                        <p>
+                                            <label class="form-label">댓글내용</label>
+                                            <input type="text" class="form-control" id="modalReviewText" placeholder="리뷰내용을 입력하세요">
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-primary btn-sm modalReviewRegisterBtn" th:data-dno="${readDto.dno}">등록하기</button>
+                                    <button type="button" class="btn btn-outline-dark btn-sm modalReviewCloseBtn">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- 댓글등록창 -->
+
+                <!-- 댓글수정 모달창 -->
+                <div class="modal reviewModalModifyDiv" tabindex="-1"  >
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title reviewModalModifyTitle">분양댓글조회</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3" id="modalModifyDrnoDiv">
+                                    <p>
+                                        <label class="form-label">댓글번호</label>
+                                        <input type="text" class="form-control" id="modalModifyDrno" readonly>
+                                    </p>
+                                </div>
+
+                                <div class="mb-3" id="modalReviewModifiedDateDiv">
+                                    <p>
+                                        <label class="form-label">댓글수정일자</label>
+                                        <input type="text" class="form-control" id="modalReviewModifiedDate" readonly>
+                                    </p>
+                                </div>
+
+                                <div class="mb-3" id="modalReviewCreatedDateDiv">
+                                    <p>
+                                        <label class="form-label">댓글등록일자</label>
+                                        <input type="text" class="form-control" id="modalReviewCreatedDate" readonly>
+                                    </p>
+                                </div>
+
+                                <div class="mb-3" id="modalReviewModifyReplyerDiv">
+                                    <p>
+                                        <label class="form-label">댓글자</label>
+                                        <input type="text" class="form-control" id="modalReviewModifyReplyer" th:value="${loginMember}"readonly>
+                                    </p>
+                                </div>
+
+                                <div class="mb-3" id="modalReviewModifyTextDiv">
+                                    <p>
+                                        <label for="modalReviewModifyText" class="form-label">댓글내용</label>
+                                        <input type="text" class="form-control" id="modalReviewModifyText" placeholder="리뷰내용을 입력하세요">
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-warning btn-sm modalReviewModifyBtn" th:data-dno="${readDto.dno}">저장하기</button>
+                                <button type="button" class="btn btn-outline-danger btn-sm modalReviewRemoveBtn" th:data-dno="${readDto.dno}">삭제하기</button>
+                                <button type="button" class="btn btn-outline-dark btn-sm modalReviewModifyCloseBtn">닫기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- 댓글수정창 -->
+
+
+            </div><!-- 분양댓글 container-->
+
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+$(document).ready(function(){
+
+var imageTrue =[[${readDto.dsiDtoList != null}]];
+var imageFalse = [[${readDto.dsiDtoList == null}]];
+
+var dsiDtoList =[[${readDto.dsiDtoList}]];
+//-console.log("read.html 분양글에 이미지 존재할경우 !=null->"+ imageTrue);
+//-console.log("read.html 분양글에 이미지 존재할경우 readDto.dsiDtoList->"+ dsiDtoList);
+
+var imageDataArray=[];
+
+var readForm =$("form");
+
+var loginMember =[[${loginMember}]];
+//var loginMemberEmail =[[${loginMemberEmail}]];
+var replyer = $(".rDtoTr").data("replyer");
+
+var readDno = [[${readDto.dno}]]
+
+
+//____________________________________________________________________________________________________
+//분양완료글
+$("#completeBtn").on("click", function(){
+    //-console.log("read.html 분양완료버튼 클릭 진입");
+    //-console.log("read.html 분양완료버튼 클릭 진입 현재 분양글번호 -> "+readDno);
+
+    var completeData = {readDno: readDno}
+
+    if(confirm("분양완료 처리를 하시겠습니까?")){
+        $.ajax({
+            url: '/dogsell/complete',
+            type:'post',
+            data:JSON.stringify(completeData),
+            contentType: "application/json;charset=utf-8",
+            dataType:'text',
+
+            success: function(result){
+                 const completeResult = result;
+                 //-console.log("read.html 분양완료버튼 ajax - success() 진입 결과 -> "+ completeResult);
+
+                if(completeResult == "true"){
+                    location.replace(`/dogsell/list`)
+                    alert(loginMember+" 님! " +readDno+" 번 강아지의 분양완료가 처리되었습니다!")
+                }
+            },
+            fail: function(){
+                 //-console.log("read.html 분양완료버튼 ajax - fail() 진입 결과");
+                    location.replace(`/dogsell/read?dno=${readDno}`);
+            }
+        });//끝 ajax
+    }//끝 if문
+});//분양완료시
+
+//____________________________________________________________________________________________________
+//분양글 댓글등록
+$(".replyRegisterBtn").on("click", function(e){
+    e.preventDefault();
+    //-console.log("dogsell-read.html 댓글등록버튼 클릭이벤트 진입");
+    $(".reviewModalRegisterDiv").show();
+});
+
+//분양글 댓글창 닫기
+$(".modalReviewCloseBtn").on("click", function(e){
+    e.preventDefault();
+    //-console.log("dogsell-read.html 모달창 댓글등록 닫기이벤트 진입");
+    $(".reviewModalRegisterDiv").hide();
+});//끝 on()
+
+var dno =[[${readDto.dno}]];
+
+
+//댓글목록보기 클릭이벤트
+$(".replyListBtn").on("click", function(e){
+    //e.preventDefault();
+    //-console.log("dogsell-read.html 댓글목록보기 클릭이벤트 진입");
+
+    var replyList = $(this).closest(".container").find(".replyList");
+    var status = replyList.css("display");
+    //-console.log("dogsell-read.html 댓글목록보기 클릭이벤트 진입 display 속성값 -> "+status);
+
+    if(status == "none"){
+        //console.log("dogsell-read.html 댓글목록보기 클릭이벤트 진입 -현재 닫혔을때");
+        replyList.show("fast");
+        $(".replyListBtn").html("댓글목록닫기");
+    }else{
+        //console.log("dogsell-read.html 댓글목록보기 클릭이벤트 진입 -현재 열렸을때");
+        replyList.hide();
+        $(".replyListBtn").html("댓글목록보기");
+    }
+});//끝 on() 댓글목록보기 이벤트
+
+
+//모달창 댓글등록 클릭이벤트
+$(".modalReviewRegisterBtn").on("click", function(e){
+    e.preventDefault();
+    //-console.log("dogsell-read.html 모달창 댓글등록 클릭이벤트 진입");
+// .reviewModalRegisterDiv #modalReviewReplyer #modalReviewText
+
+    var dnoValue= $(this).data("dno");
+    var replyList=  $(this).closest("container").find(".replyList");
+    var modalReviewReplyer =$("#modalReviewReplyer").val();
+    var modalReviewText =$("#modalReviewText").val();
+    //-console.log("dogsell-read.html 모달창 댓글등록 클릭이벤트 진입 - 댓글등록하는 게시글번호 -> "+ dnoValue);
+    var data ={replyer:modalReviewReplyer, text:modalReviewText}
+
+    //-console.log("dogsell-read.html 모달창 댓글등록 클릭이벤트 진입 - $.ajax로 보낼 데이터 출력 -> "+ data);
+
+    if(modalReviewText ==""){
+        alert("댓글 내용을 입력해주세요!");
+        $("#modalReviewText").focus();
+        return;// 이게없으면 안된다.
+    }
+
+    $.ajax({
+        url:"/dogsell/reply/register/"+dnoValue,
+        type:'post',
+        data:JSON.stringify(data),
+        contentType: "application/json;charset=utf-8",
+        dataType:'text',
+
+        success: function(result){
+            //-console.log("dogsell-read.html 모달창 댓글등록 클릭이벤트 진입 - $.ajax success() 진입");
+            alert(result +"번 분양댓글이 등록되었습니다.");
+            $(".reviewModalRegisterDiv").hide();
+            location.replace(`/dogsell/read?dno=${dno}`);
+        }
+    });//끝 $.ajax
+});//on() 모달창 댓글등록 이벤트진입
+
+//댓글목록 조회버튼 이벤트 처리
+$(".rDtoTr #replyListReadBtn").on("click", function(){
+
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입");
+//#replyListModifyBtn .reviewModalModifyDiv #modalModifyDrno  #modalReviewModifiedDate
+//#modalReviewCreatedDate #modalReviewModifyReplyer #modalReviewModifyText
+//.modalReviewModifyBtn .modalReviewRemoveBtn .modalReviewModifyCloseBtn
+
+
+    var drno = $(this).data("drno");
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입 댓글번호 data- 담은-> "+ drno);
+    var text = $(this).data("text")
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입 댓글내용 data- 담은-> "+ text);
+
+    var replyer = $(this).data("replyer");
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입 댓글자 data- 담은-> "+ replyer);
+
+    var createddate = $(this).data("createddate")
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입 댓글등록일자 data- 담은-> "+ createddate);
+    var modifieddate = $(this).data("modifieddate");
+    //-console.log("dogsell-read.html 댓글목록 조회버튼 클릭이벤트 진입 댓글수정일자 data- 담은-> "+ createddate);
+
+    var dataValue={drno:drno,text:text,replyer:replyer,createddate:createddate,modifieddate:modifieddate};
+
+    //-console.log("dogsell-read.html  댓글목록 조회버튼 클릭이벤트 진입 - <tr> 태그의 data- 속성 값 -> ");
+    //-console.log(dataValue);
+
+    $("#modalModifyDrno").val(drno);
+    $("#modalReviewModifiedDate").val(modifieddate);
+    $("#modalReviewCreatedDate").val(createddate);
+    $("#modalReviewModifyReplyer").val(replyer);
+    $("#modalReviewModifyText").val(text);
+
+    //-console.log("로그인사용자의 name -> "+loginMember+", replyer->"+ replyer);
+
+    if(loginMember === replyer){
+        $(".reviewModalModifyTitle").html("분양댓글조회&수정");
+    }
+    if(loginMember != replyer){
+        $(".reviewModalModifyTitle").html("분양댓글조회");
+        $(".modalReviewRemoveBtn").hide();
+        $(".modalReviewModifyBtn").hide();
+    }
+    $(".reviewModalModifyDiv").show();
+});//댓글목록 조회버튼
+
+//댓글목록에서 삭제버튼클릭
+$(".rDtoTr #replyListModifyBtn").on("click", function(e){
+    e.preventDefault();
+    //-console.log("dogsell-read.html 댓글목록 삭제버튼 클릭");
+    var replyList=  $(this).closest("container").find(".replyList");
+
+    var drnoValue =$(this).data("drno");
+    //-console.log("dogsell-read.html 댓글목록 삭제버튼 클릭 - 삭제할 분양댓글번호 -> "+ drnoValue);
+
+    if(confirm(drnoValue+"번 분양댓글 삭제하시겠습니까?")){
+        //-console.log("dogsell-read.html 댓글목록 삭제버튼 클릭 - confirm -> True 진입");
+        $.ajax({
+            url:'/dogsell/reply/remove',
+            type:'post',
+            data:JSON.stringify(drnoValue),
+            dataType:'text',
+            contentType:"application/json; charset=utf-8",
+
+            success: function(result){
+                //-console.log("dogsell-read.html 댓글목록 삭제버튼 클릭 - 콜백함수 실행");
+                alert(result+"번 분양댓글이 삭제되었습니다.");
+                location.replace(`/dogsell/read?dno=${dno}`);
+
+            }//끝success
+        });//끝$.ajax
+    }//끝if
+});//on() 목록에서 삭제버튼 클릭
+
+
+//수정모달창 저장하기버튼 클릭이벤트
+$(".modalReviewModifyBtn").on("click", function(){
+    //-console.log("dogsell-read.html 모달 수정창 저장하기 버튼이벤트 진입");
+    var dnoValue =$(this).data("dno");
+    var drnoValue = $("#modalModifyDrno").val();
+    //$("#modalReviewModifyReplyer").val(replyer);
+    var textValue = $("#modalReviewModifyText").val();
+    var replyList=  $(this).closest("container").find(".replyList");
+
+    var dataModify = {drno:drnoValue, text:textValue}; // dno값이 딱히 필요가없다.
+    //-console.log("dogsell-read.html 모달 수정창 저장하기 버튼이벤트 진입 - $.ajax보낼 데이터 출력 -> " );
+    //-console.log(dataModify);
+
+    $.ajax({
+        url:'/dogsell/reply/modify/'+dnoValue,
+        type:'put',
+        data: JSON.stringify(dataModify),
+        contentType: "application/json;charset=utf-8",
+        dataType:'text',
+
+        success: function(result){
+            //-console.log("dogsell-read.html 모달 수정창 저장하기 버튼이벤트 진입 - $.ajax success() 진입");
+            alert(result+"번 게시글이 수정되었습니다.");
+            $(".reviewModalModifyDiv").hide();
+            location.replace(`/dogsell/read?dno=${dno}`);
+        }
+    });//끝 $.ajax
+});//on() 모달수정창 저장하기버튼 클릭이벤트
+
+
+//#replyListModifyBtn .modalReviewModifyBtn .modalReviewRemoveBtn .modalReviewModifyCloseBtn
+//수정모달창 삭제하기 버튼 이벤트
+$(".modalReviewRemoveBtn").on("click", function(){
+    //-console.log("dogsell-read.html 모달 수정창 삭제하기 버튼이벤트 진입");
+    var replyList=  $(this).closest("container").find(".replyList");
+
+    var drnoValue = $("#modalModifyDrno").val();
+    //-console.log("dogsell-read.html 모달 수정창 삭제하기 버튼이벤트 진입 -삭제할 댓글번호 -> "+ drnoValue);
+
+    var data ={drno:drnoValue};
+
+    $.ajax({
+        url:'/dogsell/reply/remove',
+        type:'post',
+        data:JSON.stringify(drnoValue), // {drno:drnoValue}, //JSON.stringify(data),
+        dataType:'text',
+        contentType:"application/json; charset=utf-8",
+
+        success: function(result){
+            //-console.log("dogsell-read.html 모달 수정창 삭제하기 버튼이벤트 진입 - $.ajax success() 진입");
+            alert(result+"번 게시글이 삭제되었습니다.");
+            $(".reviewModalModifyDiv").hide();
+            location.replace(`/dogsell/read?dno=${dno}`);
+        }//success
+    });//끝 $.ajax
+});//끝 on() 수정모달창 삭제하기버튼 클릭
+
+//수정모달창 닫기버튼 이벤트
+$(".modalReviewModifyCloseBtn").on("click", function(){
+  $(".reviewModalModifyDiv").hide();
+});//끝 on() 수정모달창 닫기버튼 이벤트
+
+
+//____________________________________________________________________________________________________
+//분양글처리
+//-console.log("read.html 진입 imageTrue -> "+imageTrue +", imageFalse -> "+imageFalse);
+
+if(imageFalse){
+    //-console.log("dogsell-read.html 첨부파일 이미지가 존재하지 않을때 진입 -> "+ imageFalse);
+}//if문 imageFalse경우
+
+
+if(imageTrue){
+    //-console.log("dogsell-read.html 첨부파일 이미지가 존재할떄 진입 -> "+imageTrue);
+    var str="";
+
+    //Long inum; String uuid,imgName,path; getImageURL() getThumbnailURL()
+    $.each(dsiDtoList, function(index, arr){
+        //-console.log("dogsell-read.html 첨부파일 이미지가 존재할떄 진입 $.each 진입 ");
+
+        str+=`<li data-name="${arr.imgName}" data-path="${arr.path}" data-uuid="${arr.uuid}"
+                     style='list-style-type:none;margin:10px'>
+                <a data-file=${arr.imageURL} style="color:#cc0000;text-decoration:none;">
+                <img src="/dogselldisplay?fileName=${arr.thumbnailURL}" style="height:200px;width:auto;">
+                </a>
+                </li>`
+                //-console.log(arr);
+
+            var imgNameLi = arr.imgName;
+            var pathLi = arr.path;
+            var uuidLi = arr.uuid;
+
+            //-console.log("dogsell-read.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.imgName -> "+ imgNameLi);
+            //-console.log("dogsell-read.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.path -> "+ pathLi);
+            //-console.log("dogsell-read.html 일반컨트롤러에서 타임리프로 데이터받을때 $.each arr.uuid -> "+ uuidLi);
+
+            imageDataArray.push({imgName:imgNameLi,path:pathLi,uuid:uuidLi});
+            //-console.log("dogsell-read.html 일반컨트롤러에서 타임리프로 데이터받을때 imageDataArray 배열 출력");
+
+            //-console.log(imageDataArray);
+
+            //-console.log("dogsell-read.html 일반컨트롤러에서 타임리프로 데이터받을때 생성한 html출력 -> "+ str);
+        });//$.each
+
+        $(".uploadResult ul").append(str);
+}//if문 imageTrue 경우 이미지보여주기
+
+
+//________________________________________
+//분양글 수정하기
+$("#modifyBtn").on("click", function(e){
+    //-console.log("dogsell-read.html 조회페이지 수정하러가기 이벤트진입");
+    e.preventDefault();
+
+    if(confirm("해당 강아지분양정보를 수정하시겠습니까?")){
+        var dno =$("#dno").val();
+        readForm.append(`<input type='hidden' name="dno" value="${dno}">`);
+
+        readForm.attr("action","/dogsell/modify");
+        readForm.attr("method","get");
+        readForm.submit();
+    }//if문 수정하기 버튼이벤트처리
+
+});//on() 수정하러가기 버튼이벤트처리
+
+//분양글 삭제하기버튼처리
+$("#removeBtn").on("click", function(e){
+    //-console.log("dogsell-read.html 조회페이지 삭제하기 버튼이벤트 진입 - form처리 ");
+    e.preventDefault();
+
+    if(confirm("해당 강아지분양정보를 삭제하시겠습니까? 삭제하실경우 모든 댓글내용이 삭제되니 유의하세요!")){
+        var dnoTag = $("#dno");
+        //-console.log(dnoTag);
+        readForm.empty();
+
+        readForm.append(dnoTag);
+        readForm.attr("action","/dogsell/remove");
+        readForm.attr("method","post");
+        readForm.submit();
+    }//if문 삭제하기버튼내부
+});//on() 삭제하기버튼 이벤트처리
+
+
+
+});//$(document).ready()
+</script>
+
+</html>

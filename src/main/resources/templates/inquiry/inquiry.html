@@ -1,0 +1,184 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+>
+
+<th:block th:replace="~{layout/article_about_inquiry :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    관리자에게 문의하기
+                </div>
+
+
+                <th:block th:if="${loginMember} ==null">
+                    <a class="btn btn-outline-primary" th:href="|@{/member/login}?${pageRequestDto.getLink()}|">로그인</a>
+                    <a class="btn btn-outline-primary" th:href="|@{/member/join}?${pageRequestDto.getLink()}|">회원가입</a>
+                </th:block>
+
+                <th:block th:if="${loginMember} !=null">
+                    <b>[[${loginMember.name}]]</b>님 반갑습니다^^ &nbsp
+                    <a class="btn btn-outline-success" th:href="@{/member/logout}">로그아웃</a>
+                </th:block>
+
+
+        <!-- 모달 메시지연락창 -->
+        <form>
+            <div class="modal inquiryModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <button type="button" class="btn-close inquiryModalCloseBtn" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                        <div class="text-center mb-5">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3">
+                                <i class="bi bi-envelope contactBtn"></i>
+                            </div>
+                            <h1 class="fw-bolder">관리자에게 연락</h1>
+                        </div>
+                        <div class="modal-body">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">닉네임</span>
+                                <input type="text" class="form-control" name="writer"
+                                       readonly th:value="${loginMember.name}"/>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">이메일</span>
+                                <input type="text" class="form-control"
+                                       readonly th:value="${loginMember.email}" name="email"/>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">핸드폰(기호없이 숫자만) 선택사항</span>
+                                <input type="text" class="form-control" name="phone" onchange="phoneCheck(this)"/>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">문의내용</span>
+                                <textarea class="form-control content" name="content" id="content" rows="7" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary btn-lg" id="inquiryBtn"
+                                    type="button">관리자에게전달
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- 모달 메시지연락창 -->
+        </form>
+    </div>
+</article>
+
+
+
+<script th:inline="javascript">
+
+var registerresult = [[${register}]];
+var name = [[${loginMember.name}]];
+//-console.log("inquiry.html 관리자에게 문의하기 결과확인 -> "+registerresult);
+
+function phoneCheck(target){
+    //-console.log("inquiry.html 폰번호 정규식표현 검사 진입");
+    //-console.log(target);
+    var num = target.value; //this.val()에러
+    //-console.log("inquiry.html 폰번호 정규식표현 검사 진입 -> "+ num);
+
+    num = num.replace(/ /gi, '');
+    //var check = /^(01[016789]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+    var check = /^(01[016789]{1})?[0-9]{3,4}?[0-9]{4}$/;
+
+    var result = check.test(num);
+    if(result){
+        //-console.log("정규식 맞음");
+        target.focus();
+    }else{
+        //-console.log("정규식 틀림");
+        alert("핸드폰번호의 공백과 '-' 기호를 제외한 숫자만 입력해주세요!")
+        target.focus();
+    }
+}//핸드폰입력 onchange이벤트
+
+
+(function(){
+    //-console.log("inquiry.html 관리자에게 문의하기 모달창 즉시실행함수로 열기");
+    $(".inquiryModal").show();
+})();//즉시실행함수
+
+
+$(document).ready(function(){
+    if(registerresult==="success"){
+        alert(name+ " 님의 문의가 등록되었습니다!")
+    }
+    //else{
+    //    alert(name+ " 님의 문의가 등록되지 않았습니다. 다시 한번 확인해주세요!")
+    //}
+
+
+    //모달창닫기
+    $(".inquiryModalCloseBtn").on("click", function(){
+        //-console.log("inquiry.html 관리자에게 문의하기 모달창 닫기버튼 클릭이벤트 진입");
+        $(".inquiryModal").hide();
+    });
+
+    //문의하기 전달
+    $("#inquiryBtn").on("click", function(){
+        //-console.log("inquiry.html 관리자에게 문의하기 전달클릭 이벤트 진입");
+        // writer content phone email complete
+
+        var writer =$("input[name='writer']").val();
+        var content =$(".content").val();
+        var phone =$("input[name='phone']").val();
+        var email =$("input[name='email']").val();
+
+        //-console.log(phone);
+
+        if(contentVal == null || contentVal ==""){
+            alert("문의내용을 입력해주세요!")
+            $("#content").focus();
+            return;
+        }
+
+
+        if(phone.length != 0){
+            //-console.log("inquiry.html 관리자에게 문의하기 핸드폰번호 입력했을 경우 유효성체크 진입");
+
+            phone = phone.replace(/ /gi, '');
+            var regExp = /^(01[016789]{1})?[0-9]{3,4}?[0-9]{4}$/;
+
+            if(!regExp.test(phone)){
+                alert("핸드폰번호의 공백과 '-' 기호를 제외한 숫자만 입력해주세요!")
+                return;
+            }else{
+                var contentVal = $("#content").val();
+
+                if(contentVal == null || contentVal ==""){
+                    alert("문의내용을 입력해주세요!")
+                    $("#content").focus();
+                    return;
+                }
+                if(confirm("아래 내용으로 관리자에게 문의하시겠습니까?")){
+                    $("form").attr("method","post").attr("action","/inquiry/register").submit();
+                    $(".inquiryModal").hide();
+                }
+            }//끝if정규식
+        }else{
+            //-console.log("inquiry.html 관리자에게 문의하기 핸드폰번호 입력하지 않았을 경우 바로 문의글 등록시키기");
+
+            if(confirm("아래 내용으로 관리자에게 문의하시겠습니까?")){
+                $("form").attr("method","post").attr("action","/inquiry/register").submit();
+            }//if문
+
+        }//끝if핸드폰입력여부
+    });//끝on이벤트버튼 문의하기
+
+});//끝 제이쿼리
+
+
+</script>
+</th:block>
+</th:block>
+
+</html>

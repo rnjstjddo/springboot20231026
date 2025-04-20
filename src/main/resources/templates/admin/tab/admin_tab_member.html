@@ -1,0 +1,175 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<th:block th:replace="~{layout/article_about_admin_navs :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <div class="container">
+
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    가입회원 전체목록(관리자페이지)
+                </div>
+                <form th:action="@{/admin/tab/member}" method="get">
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <select class="form-select" name="type">
+                                        <option th:selected ="${pageRequestDTO.type == null}" value="" >---</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'n'}" value="n">회원명</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'e'}" value="e">회원이메일</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'b'}" value="b">소셜로그인여부(false/true)</option>
+                                        <option th:selected ="${pageRequestDTO.type == 'r'}" value="r">회원권한</option>
+                                    </select>
+                                </div>
+
+                                <input type="text" class="form-control" name="keyword"
+                                       th:value="${pageRequestDTO.keyword}">
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary btn-search searchBtn" type="submit">검색</button>
+                                    <button type="reset" class="btn btn-outline-secondary" id="reset">초기화</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- 검색처리 -->
+
+                    <br><br>
+
+                    <table class="table table-hover">
+                        <tr>
+                            <th scope="col" width="200px">이메일</th>
+                            <th scope="col" width="200px">이름</th>
+                            <th scope="col" width="100px">소셜로그인여부</th>
+                            <th scope="col" width="100px">권한</th>
+                            <th scope="col" width="150px">가입일자</th>
+                        </tr>
+
+
+                        <tr th:each="dto:${responseDtoList}">
+                            <td id="id">[[${dto.email}]]</td>
+                            <td>[[${dto.name}]]</td>
+                            <td>[[${dto.fromSocial}]]</td>
+                            <td>[[${dto.role}]]</td>
+                            <td>[[${#temporals.format(dto.createdDate,'yyyy-MM-dd')}]]</td>
+                        </tr>
+
+                    </table>
+
+                    <nav  aria-label="Page navigation example">
+                        <div>
+                            <ul class="pagination">
+                                <li class="page-item pagination_button " th:if="${responseDto.prev}">
+                                    <a  class="page-link" aria-label="Previous" th:data-num="${responseDto.start-1}" ><span aria-hidden="true">&laquo;</span></a>
+                                </li>
+
+                                <th:block th:each="i:${#numbers.sequence(responseDto.start, responseDto.end)}" th:if="${responseDto.page}">
+                                    <li class="page-item pagination_button " th:classappend="${responseDto.page == i } ? active : ''" >
+                                        <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                                    </li>
+                                </th:block>
+
+                                <li class="page-item pagination_button " th:if="${responseDto.next}">
+                                    <a  class="page-link" aria-label="Next" th:data-num="${responseDto.end+1}"><span aria-hidden="true">&raquo;</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <br>
+                    <br>
+
+                    <th:block th:if="${responseDtoList} ==null and ${pageRequestDTO.type} ==null and
+                        ${pageRequestDTO.keyword} ==null">
+                        <img class="card-img-top" style="height:100px;width:auto;" src="/image/imoji/waiting.jpg" alt="" />
+                        가입한 회원이 없습니다.
+                    </th:block>
+
+
+                    <th:block th:if="${responseDtoList} ==null and ${pageRequestDTO.type} !=null and
+                        ${pageRequestDTO.keyword} !=null">
+                        <div style="text-align:center;">
+                            <b>검색 결과가 없습니다. </b> &nbsp;&nbsp;
+                        </div>
+                    </th:block>
+                    <br>
+                </form>
+            </div>
+
+        </article>
+
+    </th:block>
+</th:block>
+
+<script th:inline="javascript">
+
+$(document).ready(function(){
+ //검색+페이지이동
+    $("a.page-link").on("click", function(e){
+        //-console.log("admin_tab_member.html 검색+페이지이동 처리 클릭이벤트 진입");
+        e.preventDefault();
+        var page = $(this).data("num");
+
+        $("form").append(`<input type='hidden' name='page' value=${page}>`);
+
+        $("form").submit();
+    });//검색+페이지이동
+
+
+    $("#reset").on("click", function(e){
+        e.preventDefault();
+        $("form").empty();
+        $("form").submit();
+    });
+
+//검색버튼클릭시
+    $(".searchBtn").on("click", function(e){
+        e.preventDefault();
+        //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입");
+        var selectvalue = $("select[name=type]").val();
+        //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+        var selectkeyword = $("input[name=keyword]").val();
+        //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+        if(selectvalue =="" || selectkeyword == ""){
+            //-console.log("admin_tab_member.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+            alert("검색조건을 선택하시고 검색어를 입력해주세요");
+            return;
+        }
+
+        if(selectvalue !="" && selectkeyword != ""){
+            //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+            $("form").submit();
+        }
+    });
+
+     $(".searchBtn").on("keyup",function(key){
+        if(key.keyCode==13){
+            //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입");
+            var selectvalue = $("select[name=type]").val();
+            //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 먼저 select값 확인 -> "+selectvalue);
+
+            var selectkeyword = $("input[name=keyword]").val();
+            //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 먼저 keyword값 확인 -> "+selectkeyword);
+
+            if(selectvalue =="" || selectkeyword == ""){
+                //-console.log("admin_tab_member.html  검색버튼 클릭이벤트 진입 select값이 없거나 검색키워드입력하지 않은경우");
+                alert("검색조건을 선택하시고 검색어를 입력해주세요");
+                return;
+            }
+
+            if(selectvalue !="" && selectkeyword != ""){
+                //-console.log("admin_tab_member.html 검색버튼 클릭이벤트 진입 select값이 존재하고 검색키워드입력한 경우");
+                $("form").submit();
+            }
+        }
+    });
+
+});//제이쿼리
+
+</script>
+
+
+</html>

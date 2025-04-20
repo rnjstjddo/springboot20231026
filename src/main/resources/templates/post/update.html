@@ -1,0 +1,471 @@
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<th:block th:replace="~{layout/article_about :: setContent(~{this::content} )}">
+    <th:block th:fragment="content">
+
+        <article>
+            <!-- Post header-->
+            <!--            <header class="mb-4">
+                            &lt;!&ndash; Post title&ndash;&gt;
+                            <h1 class="fw-bolder mb-1">영화리뷰 Movie Review Page</h1>
+                        </header>-->
+            <div class="container">
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    게시글 조회&수정
+                </div>
+
+                <!--<button class="btn btn-outline-success" id="listBtn">목록으로</button>-->
+                <a class="btn btn-outline-success" th:href="|@{/post/list}?${pageRequestDto.getLink()}|">목록으로</a>
+
+
+                <form>
+
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        번호
+                        <input class="form-control" type="text"  name="id" id="id"  th:value="${posts.id}" readonly/>
+                    </div>
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        제목
+                        <input class="form-control" type="text"  name="title" id="title"  placeholder="제목을 작성해주세요"
+                               th:value="${posts.title}" readonly/>
+                    </div>
+                    <br>
+                    <br>
+
+
+                    <div class="mb-3">
+                        작성자
+                        <input class="form-control" type="text"  name="author"  id="author"
+                               th:value="${posts.author}" readonly/>
+                    </div>
+                    <br>
+                    <br>
+
+
+                    <div class="mb-3">
+                        <label class="form-label">내용</label>
+                        <textarea class="form-control"  name="content"  id="content" rows="3" readonly>[[${posts.content}]]</textarea>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        작성일자
+                        <input class="form-control" type="text"  name="createdDate" th:value="${#temporals.format(posts.createdDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+                    <br>
+
+                    <div class="mb-3">
+                        수정일자
+                        <input class="form-control" type="text"  name="modifiedDate" th:value="${#temporals.format(posts.modifiedDate, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </div>
+                    <br>
+                    <br>
+
+                    <div class="col-12" style="text-align: center;">
+                        <th:block th:if="${loginMember == posts.author}">
+                        <button type="button" style="display:inline-block;" class="btn btn-outline-primary" id="modifyBtn">게시글 저장하기</button>
+                        <button type="button" style="display:inline-block;" class="btn btn-outline-danger" id="removeBtn">게시글 삭제하기</button>
+                        <button type="button"  style="display:inline-block;" class="btn btn-outline-secondary" id="resetBtn">초기화</button>
+                        </th:block>
+                        <th:block th:unless="${loginMember == posts.author}">
+                        </th:block>
+                    </div>
+                </form>
+                <br>
+                <div class="h4 pb-2 mb-4 text-primary border-bottom border-primary">
+                    게시글 댓글
+                </div>
+
+
+                <section>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <!-- Comment form-->
+                            <button type="button" class="btn btn-outline-success  replyAddBtn">댓글등록하기</button>
+                            <br>
+                            <form class="mb-4">
+                                <textarea class="form-control replyAddTextArea" rows="3" placeholder="상호존중 댓글문화를 지향합니다. 댓글을 남겨주세요~" autofocus>
+                                </textarea>
+                            </form>
+                            <!-- Comment with nested comments-->
+                            <div class="noPostReply">
+                            <th:block th:if="${rDtoList == null || rDtoList.size() == 0}">
+                                게시물의 댓글이 없습니다. 먼저 올려주세요^^
+                            </th:block>
+                            </div>
+
+                            <ul class="replyOuterUl">
+                                <th:block class="authorReplyOuterUl">
+                                <th:block th:if="${rDtoList != null || rDtoList.size() > 0}" th:each="rDto:${rDtoList}">
+                                <th:block th:if="${rDto.name == posts.author}">
+                                    <li style="list-style-type:none;" class="authorReplyOuterLi">
+                                        <div class="d-flex">
+                                            <div class="flex-shrink-0" style="width:50px;height:50px;display:inline-block;">
+                                                <img class="rounded-circle" style="width:100%;height:100%;display:text-align;display:flex;justify-content:center;" src="/image/imoji/wink.png"/>
+                                            </div>
+                                            <div class="ms-3">
+                                                <div class="fw-bold">[[${rDto.name}]]
+                                                    | [[${#temporals.format(rDto.modifiedDate, "yyyy/MM/dd HH:mm")}]]
+                                                </div>
+                                                [[${rDto.comment}]]
+                                                <a href="javascript:;" style="text-decoration:none;"
+                                                   onclick="authorRemoveBtn(this);"
+                                                   th:attr="data-prno=${rDto.prno}" th:if="${loginMember ==  rDto.name}">
+                                                X</a>
+                                                <div class="d-flex mt-4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </th:block>
+                                </th:block>
+                                </th:block>
+                                <th:block class="memberReplyOuterUl">
+                                <th:block th:if="${rDtoList != null || rDtoList.size() > 0}" th:each="rDto:${rDtoList}">
+                                <th:block th:if="${rDto.name !=  posts.author}">
+                                    <li style="list-style-type:none;" class="memberReplyOuterLi">
+                                        <div class="d-flex ms-3">
+                                            <div class="flex-shrink-0" style="width:50px;height:50px;">
+                                                <img class="rounded-circle" style="width:100%;height:100%;display:text-align;display:flex;justify-content:center;"  src="/image/imoji/smile.png"/>
+                                            </div>
+                                            <div class="ms-3">
+                                                <div class="fw-bold">[[${rDto.name}]]
+                                                    | [[${#temporals.format(rDto.modifiedDate, "yyyy/MM/dd HH:mm")}]]
+                                                </div>
+                                                [[${rDto.comment}]]
+                                                <a href="javascript:;" style="text-decoration:none;"
+                                                   onclick="memberRemoveBtn(this);" th:attr="data-prno=${rDto.prno}"
+                                                   th:if="${rDto.name ==  loginMember}">
+                                                X</a>
+                                                <div class="d-flex mt-4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </th:block>
+                                </th:block>
+                                </th:block>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div><!--container -->
+
+        </article>
+    </th:block>
+</th:block>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script th:inline="javascript">
+
+//게시글 댓글 날짜처리
+function dateFormat(date){
+//-console.log("update.html 날짜처리 진입 파라미터 ->"+date);
+    var date =new Date(date);
+
+    return date.getFullYear()+
+    '/'+(date.getMonth()+1)+'/'+date.getDate()+' '+ date.getHours()+':'+date.getMinutes();
+}
+
+
+
+function memberRemoveBtn(obj){
+    //-console.log("post-update.html member 화면댓글목록 삭제버튼 클릭이벤트 진입");
+    if(confirm("해당 댓글을 삭제하시겠습니까?")){
+        //-console.log($(obj));
+        var prno =$(obj).data("prno");
+        //-console.log("방명록 댓글삭제 번호 확인 -> "+ prno);
+
+        $.ajax({
+            url:"/post/reply/delete",
+            type:"delete",
+            data:{prno:prno},
+            dataType:"text",
+            success:function(result){
+                //-console.log("post-update.html member 화면댓글목록 삭제버튼 클릭이벤트 진입 -$.ajax success() 진입");
+                //-console.log(result);
+                alert(prno+"번 댓글이 삭제되었습니다.");
+                $(obj).closest(".memberReplyOuterLi").remove();
+            }//success
+        });//$.ajax
+    }//if문
+}
+
+//------------------- 댓글삭제처리
+function authorRemoveBtn(obj){
+    //-console.log("post-update.html author 화면댓글목록 삭제버튼 클릭이벤트 진입");
+    if(confirm("해당 댓글을 삭제하시겠습니까?")){
+        //-console.log($(obj));
+        var prno =$(obj).data("prno");
+        //-console.log("방명록 댓글삭제 번호 확인 -> "+ prno);
+
+        $.ajax({
+            url:"/post/reply/delete",
+            type:"delete",
+            data:{prno:prno},
+            dataType:"text", //String success넘어온다
+            success:function(result){
+                //-console.log("post-update.html author 화면댓글목록 삭제버튼 클릭이벤트 진입 -$.ajax success() 진입");
+                //-console.log(result);
+                alert(prno+"번 댓글이 삭제되었습니다.");
+               $(obj).closest(".authorReplyOuterLi").remove();
+            }//success
+        });//$.ajax
+    }
+}
+
+
+
+$(document).ready(function(){
+
+var loginMember =[[${loginMember}]];
+//-console.log("post-update.html 게시글 조회수정화면 현재 로그인한 회원 -> "+loginMember);
+
+var author =[[${posts.author}]];
+var id=[[${posts.id}]];
+var posts =[[${posts}]]
+
+//-console.log("현재 loginMember -> "+loginMember+", 현재 게시글 author -> "+author);
+
+    //댓글처리
+    $(".replyAddBtn").on("click", function(){
+        //-console.log("update.html 댓글등록버튼 클릭이벤트 진입");
+        var comment = $(".replyAddTextArea").val();
+        comment = comment.trim();
+        var reply =$(".memberReplyP").val();
+        var authorReply =$(".authorReplyP").val();
+
+        var data={comment:comment, name:loginMember, pno:id};
+        //-console.log("게시글댓글내용확인 -> "+ comment);
+
+        if(comment== null || comment ==""){
+            alert("게시글댓글 내용을 입력해주세요!")
+            $(".replyAddTextArea").focus();
+            return;
+        }
+
+        //-console.log("update.html 댓글등록버튼 클릭이벤트 진입 -$.ajax보낼 data ->");
+        //-console.log(data);
+
+         $.ajax({
+            url:"/post/reply/save",
+            type:"post",
+            data:JSON.stringify(data),
+            contentType:"application/json;charset=utf-8",
+            success: function(result){
+                //-console.log("update.html 댓글등록버튼 클릭이벤트 진입 $.ajax success() 진입");
+                //-console.log("prno -> "+result.prno);
+                //-console.log("pno -> " +result.pno);
+                //-console.log("name -> "+result.name);
+                var name =result.name;
+                //-console.log("comment -> "+result.comment);
+                //-console.log(result.createdDate);
+                var newDate =dateFormat(result.modifiedDate);
+                //-console.log("변환한 modifiedDate -> " + newDate);
+
+
+                if(result.prno !=null){
+                     if(loginMember == author){
+                        //-console.log("update.html 댓글등록버튼 클릭이벤트 진입  $.ajax success() 진입 -현재로그인사용자와 댓글자가 동일한경우 진입");
+
+                        var str =``;
+
+                        str+=`<li style="list-style-type:none;" class="authorReplyOuterLi">`;
+                        str+=`<div class="d-flex">`;
+                        str+=`<div class="flex-shrink-0" style="width:50px;height:50px;display:inline-block;">`;
+                        str+=`<img class="rounded-circle" style="width:100%;height:100%;display:text-align;display:flex;justify-content:center;" src="/image/imoji/wink.png"/>`;
+                        str+=`</div>`;
+                        str+=`<div class="ms-3">`;
+                        str+=`<div class="fw-bold">${result.name} | ${newDate} `;
+                        str+=`</div>`;
+                        str+=`${result.comment}`;
+                        str+=`<a href="javascript:;" style="text-decoration:none;" onclick="authorRemoveBtn(this);"`;
+                        str+=`th:attr="data-prno=${result.prno}" th:if="${loginMember == result.name}">X</a>`;
+                        str+=`<div class="d-flex mt-4">`;
+                        str+=`</div>`;
+                        str+=`</div>`;
+                        str+=`</div>`;
+                        str+=`</li>`;
+
+                        //-console.log(str);
+                        $(".replyOuterUl").append(str);
+                        $(".replyAddTextArea").val("");
+                        $(".noPostReply").remove();
+                     }//if문
+
+                if(loginMember != author){
+                    //-console.log("update.html 댓글등록버튼 클릭이벤트 진입 $.ajax success() 진입 - 현재로그인사용자와 댓글자가 다른 경우 진입 -들여쓰기한다.");
+
+                        var str=``;
+                        str+=`<li style="list-style-type:none;" class="memberReplyOuterLi">`;
+                        str+=`<div class="d-flex ms-3">`;
+                        str+=`<div class="flex-shrink-0" style="width:50px;height:50px;">`;
+                        str+=`<img class="rounded-circle" style="width:100%;height:100%;display:text-align;display:flex;justify-content:center;"  src="/image/imoji/smile.png"/>`;
+                        str+=`</div>`;
+                        str+=`<div class="ms-3">`;
+                        str+=`<div class="fw-bold">${result.name} | ${newDate}</div>`;
+                        str+=`${result.comment}`;
+                        str+=`<a href="javascript:;" style="text-decoration:none;"`;
+                        str+=`onclick="memberRemoveBtn(this);" th:attr="data-prno=${result.prno}"`;
+                        str+=`th:if="${loginMember == result.name}">`;
+                        str+=`X</a>`;
+                        str+=`</div>`;
+                        str+=`<div class="d-flex mt-4">`;
+                        str+=`</div>`;
+                        str+=`</div>`;
+                        str+=`</div>`;
+                        str+=`</li>`;
+
+                        //-console.log(str);
+
+                        $(".replyOuterUl").append(str);
+                        $(".replyAddTextArea").val("");
+                        $(".noPostReply").remove();
+                    }//if문
+                }//바깥if문
+
+                location.reload();
+            }//success
+        });//$.ajax
+    });//게시글 댓글등록 클릭이벤트
+
+
+//member댓글삭제
+$(".replyOuterUl").on("click", ".memberRemoveBtn", function(){
+//-console.log("update.html member댓글삭제 클릭 이벤트진입");
+    if(confirm("해당 댓글을 삭제하시겠습니까?")){
+       var target =$(this);
+       target.closest(".memberReplyOuterLi").remove();
+    }//if문
+});
+
+
+//author댓글삭제
+$(".replyOuterUl").on("click", ".authorRemoveBtn", function(){
+//-console.log("update.html author댓글삭제 클릭 이벤트진입");
+    //if(confirm("해당 댓글을 삭제하시겠습니까? 관련 다른 회원님들이 작성한 댓글까지 모두 삭제됩니다.")){
+    if(confirm("해당 댓글을 삭제하시겠습니까?")){
+         var target =$(this);
+         //-console.log(target);
+         var cl = target.closest(".authorReplyOuterLi");
+         //-console.log(cl);
+         target.closest("li").remove();
+    }//if문
+});
+
+
+
+//날짜처리
+function dateFormat(date){
+//-console.log("update.html 날짜처리 진입 파라미터 ->"+date);
+    var date =new Date(date);
+
+    return date.getFullYear()+
+    '/'+(date.getMonth()+1)+'/'+date.getDate()+' '+ date.getHours()+':'+date.getMinutes();
+}
+
+
+
+var modifyForm=$("form");
+var link = [[${pageRequestDto.getLink()}]];
+
+
+//게시글 수정하기
+$("#modifyBtn").on("click", function(e){
+    //-console.log("posts-update.html 수정페이지 저장하기 버튼이벤트 진입 -ajax처리 api서버로 ");
+    e.preventDefault();
+
+    var id = $("input[name='id']").val();
+    var title = $("input[name='title']").val();
+    var content = $("#content").val();
+    var author = $("#author").val();
+
+    //-console.log(id);
+    //-console.log(title);
+    //-console.log(content);
+    //-console.log(author);
+
+    if(confirm(id+"번 게시글을 수정하시겠습니까?")){
+        var data={
+            title:title, content:content, author:author
+        };
+
+        $.ajax({
+            url:'/api/v1/posts/'+id,
+            method:'put',
+            dataType:'json',
+            contentType:'application/json;charset=utf-8',
+            data:JSON.stringify(data)
+        })
+        .done(function(){
+            //-console.log("posts-update.html 수정페이지 저장하기 버튼이벤트 진입 -done() 진입");
+            alert(id+"번 게시글이 수정되었습니다.");
+            location.replace(`/post/list?`+link);
+        })
+        .fail(function(error){
+            //-console.log("posts-update.html 수정페이지 저장하기 버튼이벤트 진입 -fail() 진입");
+            //-console.log(error);
+            alert("작성자만 수정할수있습니다.");
+        });
+    }//if문
+});//저장하기버튼 이벤트처리
+
+
+//게시글 삭제하기버튼처리
+$("#removeBtn").on("click", function(e){
+    //-console.log("posts-update.html 수정페이지 삭제하기 버튼이벤트 진입 -ajax처리 api서버로 ");
+    e.preventDefault();
+
+
+    var id = $("#id").val();
+    var author = $("#author").val();
+
+    if(confirm(id+"번 게시글을 삭제하시겠습니까? 관련 댓글도 함께 삭제되어 복구가 불가능합니다.")){
+        var data ={author:author};
+
+        $.ajax({
+            url:'/api/v1/posts/'+id,
+            method:'delete',
+            dataType:'json',
+            data:JSON.stringify(data),
+            contentType:'application/json;charset=utf-8',
+        })
+        .done(function(){
+            //-console.log("posts-update.html 수정페이지 삭제하기 버튼이벤트 진입 -done() 진입");
+            alert(id+"번 게시글이 삭제되었습니다.");
+            location.replace(`/post/list?`+link);
+        })
+        .fail(function(error){
+            //-console.log("posts-update.html 수정페이지 삭제하기 버튼이벤트 진입 -fail() 진입");
+            //-console.log(error);
+            alert("작성자만 삭제할수있습니다.");
+        });
+
+    }//if문
+});//삭제하기버튼 이벤트처리
+
+
+$("#resetBtn").on("click", function(){
+    location.reload();
+});
+
+
+});//$(document)
+
+
+</script>
+
+
+</html>
