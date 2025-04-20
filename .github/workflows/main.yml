@@ -509,7 +509,7 @@ jobs:
                #while [ 1 = 1 ]; do
                    echo "-------------------------------------------------------"
                    echo "새버전을 blue 컨테이너에서 실행시키고 상태체크중"                   
-                   PRESENT_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | cut -c 18-21) 
+                   PRESENT_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | cut -c 21-24) 
                    echo "-------------------------------------------------------"
                    echo "현재 엑진엑스 포트 확인 -> $PRESENT_PORT"
                    echo "-------------------------------------------------------" 
@@ -551,7 +551,7 @@ jobs:
                echo "현재 blue/green 컨테이너 중 1개라도 동작중이다. 어떤 컨테이너 동작중인지 확인"
                #IS_GREEN=$(sudo docker ps | grep green) 이게 왜에러가 나는지..
                
-               PRESENT_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | cut -c 18-21) #127. 시작시 18-21 /공인IP는 20-23
+               PRESENT_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | cut -c 21-24) #127. 시작시 18-21 /공인IP는 20-23 / 현재 탄력적ip적용시 21-24
                #IS_GREEN=$(sudo docker ps -a -f name=green -q)
              
                echo "----------------------------------------------------------"
