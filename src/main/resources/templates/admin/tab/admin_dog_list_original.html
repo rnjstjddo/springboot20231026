@@ -66,17 +66,14 @@
                                     </div>
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item"><span class="fw-bolder">분양결과</span>&nbsp;
-<!--                                            <th:block th:switch="${dogSell.complete}">-->
-<!--                                                <th:block th:case="true">분양완료</th:block>-->
-<!--                                                <th:block th:case="false">분양중</th:block>-->
+
+<!--                                            <th:block th:if="${dogSell.complete== 'true'}">-->
+<!--                                                분양완료-->
 <!--                                            </th:block>-->
-                                            <th:block th:if="${dogSell.complete== true}">
-                                                분양완료
-                                            </th:block>
-                                            <th:block th:unless="${dogSell.complete== true}">
-                                                분양중
-                                            </th:block>
-<!--        [[${dogSell.complete}]]-->
+<!--                                            <th:block th:unless="${dogSell.complete== 'true'}">-->
+<!--                                                분양중-->
+<!--                                            </th:block>-->
+                                               [[${dogSell.complete}]]
                                         </li>
                                         <li class="list-group-item"><span class="fw-bolder">특징</span>&nbsp;
                                             <span style="display:block; overflow:hidden; text-overflow:ellipsis; width:250px; height:100px;">
