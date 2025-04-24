@@ -258,7 +258,8 @@ style="width:auto; height:auto; max-width:210px; max-height:210px; display:block
                                                 <span class="fst-normal fs-6">예방접종:&nbsp;&nbsp;</span><span class="fw-bold">[[${dtoWish.health}]]</span><br>
                                                 <span class="fst-normal fs-6">작성일:&nbsp;&nbsp;</span><span class="fw-bold">[[${#temporals.format(dtoWish.createdDate,'yyyy-MM-dd')}]]</span><br>
                                                 <br>
-                                                <a th:href="|@{/dogsell/read?dno={dno}(dno=${dtoWish.dno})}|"style="text-align:right;" class="a-fw-bold">
+                                                <a th:href="|@{/dogsell/read?dno={dno}(dno=${dtoWish.dno})}|"
+                                                   style="text-align:right;" id="a-fw-bold">
                                                     <span class="fw-bold">보러가기
                                                     </span>
                                                 </a>
@@ -314,8 +315,8 @@ $.each(starBtnList, function(i, o){
         //$(this).find(".fw-bold").closest("a").css("pointer-events", "none");
 
 
-        let atag = $(this).closest(".col-lg-4").find(".a-fw-bold")
-        let beforeatag = $(this).find(".a-fw-bold")
+        let atag = $(this).closest(".col-lg-4").find("#a-fw-bold")
+        let beforeatag = $(this).find("#a-fw-bold")
         // console.log("list.html페이지 분양완료 a태그 출력되는지 확인 아래")
          console.log(atag)
          console.log(beforeatag)
