@@ -233,11 +233,11 @@ jobs:
             else
               echo "-----------------------------------"
               echo "blue/green 컨테이너 모두 동작중이다 service-url.inc파일의 포트확인"
-              IS_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | grep 8081)
+              IS_PORT=$(awk '{print $3}' /etc/nginx/conf.d/service-url.inc | cut -c 21-24)
               echo "-----------------------------------"
               echo "IS_PORT 값 -> $IS_PORT" 
   
-              if [ -n $IS_PORT ]; then
+              if [ $IS_PORT -eq 8081]; then
                 echo "-----------------------------------"
                 echo "현재 엑진엑스 8081포트이다. 따라서 포트설정되지 않은 green 8082 컨테이너가 동작하고 있기에 미리 중지시킨다."
                 sudo docker-compose stop green
