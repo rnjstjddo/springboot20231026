@@ -523,7 +523,8 @@ jobs:
                    #REQUEST=$(curl http://3.39.29.255:8081) 
                    #REQUEST=$(curl http://localhost:8081/) 이거도 에러
                    #REQUEST=$(curl http://$IP_BLUE:8081/) 연결거부뜨네
-                   REQUEST=$(nc -vz 127.0.0.1 8081)
+                   #REQUEST=$(nc -vz 127.0.0.1 8081) 아래수정
+                   REQUEST=$(nc -vz 54.180.199.6 8081)
                    
                    echo "-------------------------------------------------------"
                    echo "새버전을 blue 컨테이너실행 후 curl 확인-> $REQUEST "
@@ -674,7 +675,8 @@ jobs:
                    #BLUE_REQUEST=$(curl http://3.39.29.255:8081)
                    #BLUE_REQUEST=$(curl http://localhost:8081/) 이거에러
                    #BLUE_REQUEST=$(curl http://$IP_BLUE:8081/) 연결거부
-                   BLUE_REQUEST=$(nc -vz 127.0.0.1 8081) 
+                   #BLUE_REQUEST=$(nc -vz 127.0.0.1 8081) 아래로수정
+                   BLUE_REQUEST=$(nc -vz 54.180.199.6 8081) 
                    
                    #3.39.29.255 -k -X GET
                    echo "-------------------------------------------------------"
