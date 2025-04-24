@@ -65,8 +65,8 @@ public class AdminTabController {
             model.addAttribute("responseDto", pResponseDto);
         }
 
-        //return "admin/tab/admin_tab_dogsell";
-        return "admin/tab/admin_dog_list_original";
+        return "admin/tab/admin_tab_dogsell";
+        //return "admin/tab/admin_dog_list_original";
 
     }
 
