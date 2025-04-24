@@ -313,14 +313,20 @@ $.each(starBtnList, function(i, o){
         $(this).closest(".col-lg-4").find(".card-footer").html(`<h3 class="text-muted fst-italic">분양완료</h3>`)
         //$(this).find(".fw-bold").closest("a").css("pointer-events", "none");
 
-        let fwboldtag =  $(this).find(".fw-bold")
-        console.log("list.html페이지 분양완료 .fw-bold태그 출력되는지 확인 아래")
-        console.log(fwboldtag)
+        let atag = $(this).find("a")
+        // console.log("list.html페이지 분양완료 a태그 출력되는지 확인 아래")
 
-        let eachAtag =  $(this).find(".fw-bold").closest("a");
-        console.log("list.html페이지 분양완료 a태그 출력되는지 확인 아래")
-        console.log(eachAtag)
-        eachAtag.hide()
+         console.log(atag)
+
+        $(this).find("a").css("pointer-events", "none");
+        //let fwboldtag =  $(this).find(".fw-bold")
+        // console.log("list.html페이지 분양완료 .fw-bold태그 출력되는지 확인 아래")
+        // console.log(fwboldtag)
+
+        //let eachAtag =  $(this).find(".fw-bold").closest("a");
+        //console.log("list.html페이지 분양완료 a태그 출력되는지 확인 아래")
+        //console.log(eachAtag)
+        //eachAtag.hide()
     }//if문
 });
 })();
