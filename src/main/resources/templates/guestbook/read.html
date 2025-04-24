@@ -200,7 +200,7 @@ function memberRemoveBtn(obj){
         //-console.log(obj);
         var grno =$(obj).data("grno");
         //-console.log("guestbook-read.html 방명록 댓글 게시글작성자=댓글작성자 화면댓글목록 삭제버튼 클릭이벤트 진입 - onclick() 처리 삭제하려는 댓글번호 -> "+ grno);
-        console.log("방명록 삭제번호 확인 ajax전 -> "+grno);
+        //console.log("memberRemoveBtn 함수내 방명록 삭제번호 확인 ajax전 -> "+grno);
 
         $.ajax({
             url:"/guestbook/reply/delete",
@@ -228,7 +228,7 @@ function authorRemoveBtn(obj){
         var grno =$(obj).data("grno");
         //-console.log("guestbook-read.html 방명록 댓글 게시글작성자!=댓글작성자 화면댓글목록 삭제버튼 클릭이벤트 진입 - onclick() 처리 삭제하려는 댓글번호 -> "+ grno);
 
-        console.log("방명록 삭제번호 확인 ajax전 -> "+grno);
+        //console.log("authorRemoveBtn() 방명록 삭제번호 확인 ajax전 -> "+grno);
         $.ajax({
             url:"/guestbook/reply/delete",
             type:"delete",
