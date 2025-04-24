@@ -446,7 +446,8 @@ public class AdminController {
         if (memberDTO != null) {
             model.addAttribute("loginMember", memberDTO.getName());
         }
-        return "admin/admin_dogsell_list";
+        //return "admin/admin_dogsell_list";
+        return "admin/tab/admin_dog_list_original";
     }
     
     //관리자페이지에서 품종검색
