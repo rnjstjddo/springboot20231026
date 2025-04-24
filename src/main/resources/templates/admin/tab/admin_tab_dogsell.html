@@ -55,6 +55,7 @@
                         아직 등록된 분양글이 없습니다.
                     </th:block>
 
+                    <br>
                 <th:block th:each="dogSell:${responseDtoList}" th:if="${!#lists.isEmpty(responseDtoList)}">
                     <div style="height:800px;float:left;margin-right:20px;">
                         <p class="fw-bold fs-5">[[${#temporals.format(dogSell.createdDate, 'yyyy-MM-dd')}]] 분양글</p>
