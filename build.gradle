@@ -4,7 +4,7 @@ buildscript {
         springBootVersion = '2.1.7.RELEASE'
         querydslPluginVersion = '1.0.10' // 플러그인 버전
         //queryDslVersion ='5.0.0'
-        tomcat.version = '11.0.12'
+
     }
 
     repositories{
@@ -39,7 +39,12 @@ repositories {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
+    //compile('org.springframework.boot:spring-boot-starter-web')
+    implementation 'org.springframework.boot:spring-boot-starter-web' {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    //추가
+    implementation('org.springframework.boot:spring-boot-starter-tomcat:11.0.12')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 
     //롬복추가
