@@ -39,12 +39,9 @@ repositories {
 }
 
 dependencies {
-    //compile('org.springframework.boot:spring-boot-starter-web')
-    implementation 'org.springframework.boot:spring-boot-starter-web' {
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
-    }
+    compile('org.springframework.boot:spring-boot-starter-web')
     //추가
-    implementation('org.springframework.boot:spring-boot-starter-tomcat:11.0.12')
+    //implementation('org.springframework.boot:spring-boot-starter-tomcat:11.0.12')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 
     //롬복추가
