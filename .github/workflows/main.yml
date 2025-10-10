@@ -99,10 +99,8 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-              cat ./application-real-db.properties
               echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-              echo ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -161,12 +159,8 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-              echo "출력"
-              cat ./application-real-db.properties
               echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-              echo "출력"
-              cat ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -205,8 +199,6 @@ jobs:
               echo "-----------------------------------"
               echo "도커파일 위치한 곳으로 디렉토리 이동"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
-              echo "ls 확인"
-              ls
               echo "-----------------------------------"
               docker build -f ./Dockerfile_8082 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8082에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
@@ -225,12 +217,8 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-              echo "출력"
-              cat ./application-real-db.properties
               echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-              echo "출력"
-              cat ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -295,12 +283,8 @@ jobs:
                 echo "-----------------------------------"
                 echo "파일생성 ./application-real-db.properties"
                 echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-                echo "출력"
-                cat ./application-real-db.properties
                 echo "파일생성 ./application-oauth.properties"
                 echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-                echo "출력"
-                cat ./application-oauth.properties
                 echo "-----------------------------------"
                 echo "방금만든 파일 존재하는지 확인"
                 echo "-----------------------------------"
@@ -358,12 +342,8 @@ jobs:
                 echo "-----------------------------------"
                 echo "파일생성 ./application-real-db.properties"
                 echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-                echo "출력"
-                cat ./application-real-db.properties
                 echo "파일생성 ./application-oauth.properties"
                 echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-                echo "출력"
-                cat ./application-oauth.properties
                 echo "-----------------------------------"
                 echo "방금만든 파일 존재하는지 확인"
                 echo "-----------------------------------"
@@ -403,8 +383,6 @@ jobs:
                 echo "도커파일 위치한 곳으로 디렉토리 이동"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 echo "-----------------------------------"
-                echo "ls 확인"
-                ls
                 docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081에서 변경
                 docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
                 echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
