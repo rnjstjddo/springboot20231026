@@ -29,16 +29,21 @@ jobs:
         run: |
           echo "-------- 이전 clone 폴더삭제하기 -----------"
           rm -rf springboot20231026
-      - name: git pull하기
+          echo "-------- 폴더삭제후 ls  -----------"
+          ls
+      - name: git clone 하기
         run: |
-          echo "-------- git clone하기 -----------"        
+          echo "-------- git clone 전 현재위치확인 -----------"
+          pwd 
+          echo "-------- git clone 하기 -----------"        
           git clone https://github.com/rnjstjddo/springboot20231026.git
           echo "-------- springboot20231026 폴더이동 -----------"
           cd springboot20231026
+          echo "-------- 현재위치확인 -----------"
+          pwd 
           echo "-------- 현재폴더 파일확인 -----------"
           ls
-          echo "-------- 현재위치확인 -----------"
-          pwd          
+                  
         #  echo "-------- springboot20231026 폴더로 이동 -----------"
         #  cd springboot20231026
 
@@ -62,8 +67,12 @@ jobs:
         run : |
             echo "-------- 현재위치확인 -----------"
             pwd
+            echo "-------- 현재위치 ls -----------"
+            ls
             echo "-------- springboot20231026 폴더이동 -----------"
             cd springboot20231026
+            echo "-------- springboot20231026 폴더이동해서 ls -----------"
+            ls
             echo "-----------------------------------"
             echo "이미지빌드전 exited상태 컨테이너 확인"
             IS_EXITED=$(sudo docker ps -a -f status=exited -q)
@@ -100,6 +109,9 @@ jobs:
               echo "-----------------------------------"
               echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
+              echo "-----------------------------------"
+              echo "3번 같은 폴더 들어가서 파일확인 ls"
+              ls
               echo "-----------------------------------"
               echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴 기존 덮어씌운다"
               cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
@@ -151,6 +163,9 @@ jobs:
               echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
               echo "-----------------------------------"
+              echo "3번 같은 폴더 들어가서 파일확인 ls"
+              ls
+              echo "-----------------------------------"
               echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴 기존 덮어씌운다"
               cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
               cp ./nonginx-dogservice-deploy.sh /home/ubuntu/nonginx-dogservice-deploy.sh
@@ -199,6 +214,9 @@ jobs:
               echo "-----------------------------------"
               echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
+              echo "-----------------------------------"
+              echo "3번 같은 폴더 들어가서 파일확인 ls"
+              ls
               echo "-----------------------------------"
               echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴 기존 덮어씌운다"
               cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
@@ -257,6 +275,9 @@ jobs:
                 echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 echo "-----------------------------------"
+                echo "3번 같은 폴더 들어가서 파일확인 ls"
+                ls
+                echo "-----------------------------------"
                 echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴 기존 덮어씌운다"
                 cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
                 cp ./nonginx-dogservice-deploy.sh /home/ubuntu/nonginx-dogservice-deploy.sh
@@ -306,6 +327,9 @@ jobs:
                 echo "-----------------------------------"
                 echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
+                echo "-----------------------------------"
+                echo "3번 같은 폴더 들어가서 파일확인 ls"
+                ls
                 echo "-----------------------------------"
                 echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴 기존 덮어씌운다"
                 cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
