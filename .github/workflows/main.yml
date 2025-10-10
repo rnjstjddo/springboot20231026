@@ -99,8 +99,10 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
+              cat ./application-real-db.properties
               echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
+              echo ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -144,6 +146,9 @@ jobs:
               echo "-----------------------------------"
               docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081 에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
+              echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
+              cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+              ls
       
             elif [ -z $IS_GREEN_RUN ];then
               echo "-----------------------------------"
@@ -156,8 +161,12 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-              echo "파일생성 ./application-real-db.properties"
+              echo "출력"
+              cat ./application-real-db.properties
+              echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
+              echo "출력"
+              cat ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -176,6 +185,7 @@ jobs:
               echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
               chmod +x ./gradlew
+              ./gradlew clean
               ./gradlew cleanQuerydslSourceDir
               ./gradlew build -x test
               echo "-----------------------------------"
@@ -200,6 +210,9 @@ jobs:
               echo "-----------------------------------"
               docker build -f ./Dockerfile_8082 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8082에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
+              echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
+              cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+              ls
             
             elif [ -z $IS_BLUE_RUN ];then
               echo "-----------------------------------"
@@ -212,8 +225,12 @@ jobs:
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-              echo "파일생성 ./application-real-db.properties"
+              echo "출력"
+              cat ./application-real-db.properties
+              echo "파일생성 ./application-oauth.properties"
               echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
+              echo "출력"
+              cat ./application-oauth.properties
               echo "-----------------------------------"
               echo "방금만든 파일 존재하는지 확인"
               echo "-----------------------------------"
@@ -232,6 +249,7 @@ jobs:
               echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
               chmod +x ./gradlew
+              ./gradlew clean
               ./gradlew cleanQuerydslSourceDir
               ./gradlew build -x test
               echo "-----------------------------------"
@@ -256,6 +274,9 @@ jobs:
               ls
               docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
+              echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
+              cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+              ls
 
             else
               echo "-----------------------------------"
@@ -274,8 +295,12 @@ jobs:
                 echo "-----------------------------------"
                 echo "파일생성 ./application-real-db.properties"
                 echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-                echo "파일생성 ./application-real-db.properties"
+                echo "출력"
+                cat ./application-real-db.properties
+                echo "파일생성 ./application-oauth.properties"
                 echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
+                echo "출력"
+                cat ./application-oauth.properties
                 echo "-----------------------------------"
                 echo "방금만든 파일 존재하는지 확인"
                 echo "-----------------------------------"
@@ -294,6 +319,7 @@ jobs:
                 echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 chmod +x ./gradlew
+                ./gradlew clean
                 ./gradlew cleanQuerydslSourceDir
                 ./gradlew build -x test
                 echo "-----------------------------------"
@@ -318,6 +344,9 @@ jobs:
                 ls
                 docker build -f ./Dockerfile_8082 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8082에서 변경
                 docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
+                echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
+                cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+                ls
               
               else
                 echo "-----------------------------------"
@@ -329,8 +358,12 @@ jobs:
                 echo "-----------------------------------"
                 echo "파일생성 ./application-real-db.properties"
                 echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-                echo "파일생성 ./application-real-db.properties"
+                echo "출력"
+                cat ./application-real-db.properties
+                echo "파일생성 ./application-oauth.properties"
                 echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
+                echo "출력"
+                cat ./application-oauth.properties
                 echo "-----------------------------------"
                 echo "방금만든 파일 존재하는지 확인"
                 echo "-----------------------------------"
@@ -349,6 +382,7 @@ jobs:
                 echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 chmod +x ./gradlew
+                ./gradlew clean
                 ./gradlew cleanQuerydslSourceDir
                 ./gradlew build -x test
                 echo "-----------------------------------"
@@ -373,6 +407,9 @@ jobs:
                 ls
                 docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081에서 변경
                 docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
+                echo "/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동 후 ls "
+                cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+                ls
               fi #green/blue 컨테이너 둘다 동작중일때 엔진엑스포트설정을 보고 포트지정안된 컨테이너 중지시키고 그컨테이너포트로 다시 이미지생성
               
             fi
@@ -401,12 +438,14 @@ jobs:
           #port: 22
         run: |
              echo "-----------------------------------"
-             echo "현재위치 확인"
+             echo "현재위치 확인과 ls"
              pwd
+             echo "-----------------------------------"
+             ls
              echo "-----------------------------------"
              echo "/home/ubuntu 로 이동하자 여기에 도커컴포즈와 .sh 스크립트 존재하기에"
              cd ~/
-             pwd
+             
              
              #echo "-----------------------------------"
              #echo "도커허브에서 새버전 이미지 pull하기"
