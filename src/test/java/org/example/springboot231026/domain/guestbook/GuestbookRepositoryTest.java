@@ -1,4 +1,4 @@
-package org.example.springboot231026.guestbook.domain;
+package org.example.springboot231026.domain.guestbook;
 
 
 import org.example.springboot231026.domain.guestbook.Guestbook;

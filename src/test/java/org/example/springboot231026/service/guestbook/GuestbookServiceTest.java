@@ -1,4 +1,4 @@
-package org.example.springboot231026.guestbook.service;
+package org.example.springboot231026.service.guestbook;
 
 import org.example.springboot231026.domain.guestbook.Guestbook;
 import org.example.springboot231026.dto.guestbook.GuestbookDTO;
