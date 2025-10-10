@@ -50,7 +50,7 @@ dependencies {
 
     //jpa추가
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
-    compile('com.h2database:h2')
+    //compile('com.h2database:h2')
 
     //타임리프 의존성
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
