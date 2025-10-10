@@ -23,18 +23,19 @@ jobs:
         run: |
           echo "-------- 현재위치확인 -----------" 
           pwd
-        #/home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
+          echo "-------- 현재위치 ls /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 될거다 -----------" 
+          ls
+          
 
-      - name: 이전 pull 폴더삭제하기
+      - name: 이전 clone 폴더삭제하기
         run: |
+          echo "-------- clone 이전 폴더삭제 ls 매번 디폴트위치가된다. -----------" 
+          ls
           echo "-------- 이전 clone 폴더삭제하기 -----------"
           rm -rf springboot20231026
-          echo "-------- 폴더삭제후 ls  -----------"
-          ls
+         
       - name: git clone 하기
-        run: |
-          echo "-------- git clone 전 현재위치확인 -----------"
-          pwd 
+        run: | 
           echo "-------- git clone 하기 -----------"        
           git clone https://github.com/rnjstjddo/springboot20231026.git
           echo "-------- springboot20231026 폴더이동 -----------"
@@ -43,9 +44,7 @@ jobs:
           pwd 
           echo "-------- 현재폴더 파일확인 -----------"
           ls
-                  
-        #  echo "-------- springboot20231026 폴더로 이동 -----------"
-        #  cd springboot20231026
+            
 
       #- name: 그래들캐싱 #실행권한 부여전에 처리
       #  uses: actions/cache@v3
@@ -65,8 +64,6 @@ jobs:
      
       - name: 현재 EC2로컬에서 실행중인 컨테이너를 확인한 후 포트에 맞는 도커파일로 도커이미지 빌드진행
         run : |
-            echo "-------- 현재위치확인 -----------"
-            pwd
             echo "-------- 현재위치 ls -----------"
             ls
             echo "-------- springboot20231026 폴더이동 -----------"
@@ -97,6 +94,8 @@ jobs:
               echo "-----------------------------------"
               echo "폴더이동 ./src/main/resources"
               cd ./src/main/resources
+              echo "ls 출력"
+              ls
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
@@ -117,7 +116,7 @@ jobs:
               cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
               cp ./nonginx-dogservice-deploy.sh /home/ubuntu/nonginx-dogservice-deploy.sh
               echo "-----------------------------------"
-              echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
+              echo "3번 같은 폴더 위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
               chmod +x ./gradlew
               ./gradlew clean
@@ -128,7 +127,7 @@ jobs:
               echo "-----------------------------------"
               ls
               echo "-----------------------------------"
-              echo "jar파일확인"
+              echo "./build/libs/ 내에 jar파일확인"
               cd ./build/libs/
               ls
               echo "-----------------------------------"
@@ -137,6 +136,8 @@ jobs:
               echo "-----------------------------------"          
               echo "jar파일 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026 폴더로 이동"
               cp ./*.jar /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026 
+              echo "ls .jar확인"
+              ls
               echo "-----------------------------------"
               echo "도커파일 위치한 곳으로 디렉토리 이동"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
@@ -150,6 +151,8 @@ jobs:
               echo "-----------------------------------"
               echo "폴더이동 ./src/main/resources"
               cd ./src/main/resources
+              echo "ls 확인"
+              ls
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
@@ -180,7 +183,7 @@ jobs:
               echo "-----------------------------------"
               ls
               echo "-----------------------------------"
-              echo "jar파일확인"
+              echo "./build/libs 내에 jar파일확인"
               cd ./build/libs/
               ls
               echo "-----------------------------------"
@@ -192,6 +195,8 @@ jobs:
               echo "-----------------------------------"
               echo "도커파일 위치한 곳으로 디렉토리 이동"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
+              echo "ls 확인"
+              ls
               echo "-----------------------------------"
               docker build -f ./Dockerfile_8082 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8082에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
@@ -202,6 +207,8 @@ jobs:
               echo "-----------------------------------"
               echo "폴더이동 ./src/main/resources"
               cd ./src/main/resources
+              echo "ls 확인"
+              ls
               echo "-----------------------------------"
               echo "파일생성 ./application-real-db.properties"
               echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
@@ -232,7 +239,7 @@ jobs:
               echo "-----------------------------------"
               ls
               echo "-----------------------------------"
-              echo "jar파일확인"
+              echo "./build/libs 내에 jar파일확인"
               cd ./build/libs/
               ls
               echo "-----------------------------------"
@@ -245,6 +252,8 @@ jobs:
               echo "도커파일 위치한 곳으로 디렉토리 이동"
               cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
               echo "-----------------------------------"
+              echo "ls 확인"
+              ls
               docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081에서 변경
               docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
 
@@ -292,7 +301,7 @@ jobs:
                 echo "-----------------------------------"
                 ls
                 echo "-----------------------------------"
-                echo "jar파일확인"
+                echo "./build/libs 내에 jar파일확인"
                 cd ./build/libs/
                 ls
                 echo "-----------------------------------"
@@ -305,6 +314,8 @@ jobs:
                 echo "도커파일 위치한 곳으로 디렉토리 이동"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 echo "-----------------------------------"
+                echo "ls 확인"
+                ls
                 docker build -f ./Dockerfile_8082 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8082에서 변경
                 docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
               
@@ -345,7 +356,7 @@ jobs:
                 echo "-----------------------------------"
                 ls
                 echo "-----------------------------------"
-                echo "jar파일확인"
+                echo "./build/libs 내에 jar파일확인"
                 cd ./build/libs/
                 ls
                 echo "-----------------------------------"
@@ -358,116 +369,22 @@ jobs:
                 echo "도커파일 위치한 곳으로 디렉토리 이동"
                 cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026/springboot20231026
                 echo "-----------------------------------"
+                echo "ls 확인"
+                ls
                 docker build -f ./Dockerfile_8081 -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice . #dogservice:8081에서 변경
                 docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
               fi #green/blue 컨테이너 둘다 동작중일때 엔진엑스포트설정을 보고 포트지정안된 컨테이너 중지시키고 그컨테이너포트로 다시 이미지생성
               
             fi
           
-      #- name: 그래들에 실행권한한부여 + .jar빌드전 추가파일생성 + 그래들을 통한 프로젝트빌드 테스트는 제외 + 
-      #  run: |
-      #    echo "-----------------------------------"        
-      #    chmod +x ./gradlew
-          
-          #echo "현재위치확인"
-          #pwd
-          #echo "-----------------------------------"
-          #echo "현재위치에 존재하는 파일들 목록"
-          #ls
-       #   echo "-----------------------------------"
-       #   echo "폴더이동 ./src/main/resources"
-       #   cd ./src/main/resources
-       #   echo "-----------------------------------"
-       #   echo "파일생성 ./application-real-db.properties"
-       #   echo -e "${{ secrets.APPLICATION_REAL_DB }}" > ./application-real-db.properties
-       #   echo "파일생성 ./application-real-db.properties"
-       #   echo -e "${{ secrets.APPLICATION_OAUTH }}" > ./application-oauth.properties
-       #   echo "-----------------------------------"
-       #   echo "방금만든 파일 존재하는지 확인"
-       #   echo "-----------------------------------"
-       #   ls
-       #   echo "-----------------------------------"
-       #   echo "이동 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026"
-       #   cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
-       #   echo "-----------------------------------"
-       #   echo "docker-compose.yml파일과 nonginx-dogservice-deploy.sh 파일을 ubuntu에 복사시킴"
-       #   cp ./docker-compose.yml /home/ubuntu/docker-compose.yml
-       #   cp ./nonginx-dogservice-deploy.sh /home/ubuntu/nonginx-dogservice-deploy.sh
-       #   echo "-----------------------------------"
-       #   echo "위치이동후 그래들 이용한 프로젝트 소스코드 빌드 테스트제외"
-       #   cd /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026
-       #   chmod +x ./gradlew
-       #   ./gradlew cleanQuerydslSourceDir
-       #   ./gradlew build -x test
-       #   echo "-----------------------------------"
-       #   echo "build폴더 존재하는지 확인"
-       #   echo "-----------------------------------"
-       #   ls
-       #   echo "-----------------------------------"
-       #   echo "jar파일확인"
-       #   cd ./build/libs/
-       #   ls
-       #   echo "-----------------------------------"
-       #   echo "jar실행권한주기"
-       #   chmod +x ./*.jar
-       #   echo "-----------------------------------"          
-       #   echo "jar파일 /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 폴더로 이동"
-       #   cp ./*.jar /home/ubuntu/actions-runner/_work/springboot20231026/springboot20231026 
-       #   echo "-----------------------------------"
-          
-     
-      #- name: 도커파일 이용해서 이미지빌드
-      #  run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/dogservice .
-      
-      #- name: 도커허브로그인
-      #  uses: docker/login-action@v2
-      #  with:
-      #    username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #    password: ${{ secrets.DOCKERHUB_PASSWORD }}
-     
-      #- name: 도커허브에 이미지 push
-      #  run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/dogservice
-      
-    
+  
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: 깃허브 레포지토리에서 코드를 워크플로우환경으로 가져오(앞의 job과 별개의 환경이기에 체크아웃이 또 필요하다)
         uses: actions/checkout@v3      
-
-      #- name: 다른 job에서 이전 job에서 만든 파일 그대로 있는지 확인
-      #  run: |
-      #    echo "-----------------------------------"
-      #    echo "현재위치 출력"
-      #    pwd
-      #    echo "-----------------------------------"
-      #    echo "현재위치에 존재하는 파일목록 출력"
-      #    ls -a
-      #    echo "-----------------------------------"
-      #    echo "폴더 이동 ./src/main/resources 후 목록 출력 이전 job에서 만든 properties파일 존재하는지 확인"
-      #    cd ./src/main/resources
-      #    ls -a
-          
-      #- name: properties외부파일 Runner에서 secrets이용해서 생성 
-      #  run: |
-      #    mkdir ~/app
-      #    echo "${{ secrets.APPLICATION_OAUTH.PROPERTIES }}" >> ~/app/application-oauth.properties
-      #    echo "${{ secrets.APPLICATION_REAL_DB.PROPERTIES }}" >> ~/app/application-real-db.properties
-          
-          
-      #- name: Runner에서 docker-compose.yml파일 EC2로컬로 전달
-      #  uses: appleboy/scp-action@v0.0.10
-      #  with:
-      #    host: ${{ secrets.EC2_HOST }}
-      #    username: ubuntu
-      #    key: ${{ secrets.SSH_KEY }}
-      #    port: 22
-      #    overwrite: true
-      #    source: "./app"
-      #    target: "/home/ubuntu"
-      #    debug: true
-
+        
       - name: pull을 위한 도커허브로그인
         uses: docker/login-action@v2
         with:
