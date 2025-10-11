@@ -39,29 +39,29 @@ repositories {
 }
 
 dependencies {
-    compile('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-web')
     //추가
     //implementation('org.springframework.boot:spring-boot-starter-tomcat:11.0.12')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     //롬복추가
-    compile('org.projectlombok:lombok')
+    implementation('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
 
     //jpa추가
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
     //compile('com.h2database:h2')
 
     //타임리프 의존성
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
 
 
     //ModelMapper 추가 entity ->dto 등 변환담당
-    compile('org.modelmapper:modelmapper:3.1.0')
+    implementation('org.modelmapper:modelmapper:3.1.0')
 
 
-    compile("com.querydsl:querydsl-jpa") // querydsl
-    compile("com.querydsl:querydsl-apt") // querydsl
+    implementation("com.querydsl:querydsl-jpa") // querydsl
+    implementation("com.querydsl:querydsl-apt") // querydsl
 
     //compile("com.querydsl:querydsl-jpa:${queryDslVersion}")
 
@@ -71,31 +71,31 @@ dependencies {
             "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
     )*/
     //타임리프레이아웃
-    compile('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0')
+    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0')
 
-    compile('org.springframework.boot:spring-boot-devtools')
+    implementation('org.springframework.boot:spring-boot-devtools')
 
     //MariaDB
-    compile('org.mariadb.jdbc:mariadb-java-client:3.0.4')
+    implementation('org.mariadb.jdbc:mariadb-java-client:3.0.4')
 
     //시큐리티
-    compile('org.springframework.boot:spring-boot-starter-security')
-    compile('org.springframework.security:spring-security-test')
+    implementation('org.springframework.boot:spring-boot-starter-security')
+    implementation('org.springframework.security:spring-security-test')
 
     //gson
-    compile('com.google.code.gson:gson:2.9.0')
+    implementation('com.google.code.gson:gson:2.9.0')
 
     //소셜로그인
-    compile('org.springframework.boot:spring-boot-starter-oauth2-client')
+    implementation('org.springframework.boot:spring-boot-starter-oauth2-client')
 
     //첨부파일
-    compile('net.coobird:thumbnailator:0.4.8')
+    implementation('net.coobird:thumbnailator:0.4.8')
 
     //타임리프시큐리티
     implementation ('org.thymeleaf.extras:thymeleaf-extras-springsecurity5')
 
     //was세션유지
-    compile('org.springframework.session:spring-session-jdbc')
+    implementation('org.springframework.session:spring-session-jdbc')
     //implementation('org.springframework.session:spring-session-jdbc')
 }
 
