@@ -3,8 +3,6 @@ package org.example.springboot231026.domain.member;
 
 import lombok.*;
 import org.example.springboot231026.domain.posts.BaseTimeEntity;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

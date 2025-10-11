@@ -1,33 +1,43 @@
 //부트설정추가
 buildscript {
     ext{
-        springBootVersion = '2.1.7.RELEASE'
+        //springBootVersion = '2.1.7.RELEASE'
         querydslPluginVersion = '1.0.10' // 플러그인 버전
         //queryDslVersion ='5.0.0'
+        springBootVersion = '2.4.4'
+        //querydslPluginVersion = '4.4.0' // 플러그인 버전
+
 
     }
 
     repositories{
         mavenCentral()
-        jcenter()
-        maven { url "https://plugins.gradle.org/m2/" }
+        //jcenter()
+        //maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}") // querydsl 플러그인 의존성 등록
-
+        classpath "io.spring.gradle:dependency-management-plugin:${querydslPluginVersion}"
 
     }
 }
 
+plugins {
+    id "org.springframework.boot" version '2.4.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    id 'java'
+}
 
 apply plugin : 'java'
 apply plugin : 'eclipse'
 apply plugin : 'org.springframework.boot'
 apply plugin : 'io.spring.dependency-management'
+//apply plugin: "com.ewerk.gradle.plugins.querydsl" // Plugin 적용
 
-apply plugin: "com.ewerk.gradle.plugins.querydsl" // Plugin 적용
+
 def querydslSrcDir = 'src/main/generated' // QClass 생성 위치
 
 group 'org.example'
@@ -35,6 +45,11 @@ version '1.0-SNAPSHOT'
 sourceCompatibility= 11
 
 repositories {
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin/' }
+    maven { url 'https://maven.aliyun.com/repository/spring-plugin/' }
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
     mavenCentral()
 }
 
@@ -65,11 +80,11 @@ dependencies {
 
     //compile("com.querydsl:querydsl-jpa:${queryDslVersion}")
 
-  /*  annotationProcessor(
-            "javax.persistence:javax.persistence-api",
-            "javax.annotation:javax.annotation-api",
-            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
-    )*/
+    /*  annotationProcessor(
+              "javax.persistence:javax.persistence-api",
+              "javax.annotation:javax.annotation-api",
+              "com.querydsl:querydsl-apt:${queryDslVersion}:jpa"
+      )*/
     //타임리프레이아웃
     implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0')
 
@@ -97,6 +112,8 @@ dependencies {
     //was세션유지
     implementation('org.springframework.session:spring-session-jdbc')
     //implementation('org.springframework.session:spring-session-jdbc')
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.withType(Test) {
@@ -127,4 +144,14 @@ sourceSets {
             srcDirs = ['src/main/java', querydslSrcDir]
         }
     }
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
 }
