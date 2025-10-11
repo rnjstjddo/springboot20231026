@@ -397,8 +397,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - name: 깃허브 레포지토리에서 코드를 워크플로우환경으로 가져오(앞의 job과 별개의 환경이기에 체크아웃이 또 필요하다)
-        uses: actions/checkout@v3      
+      #- name: 깃허브 레포지토리에서 코드를 워크플로우환경으로 가져오(앞의 job과 별개의 환경이기에 체크아웃이 또 필요하다)
+      #  uses: actions/checkout@v3      
         
       - name: pull을 위한 도커허브로그인
         uses: docker/login-action@v2
